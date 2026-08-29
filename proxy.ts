@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_COOKIE_NAME, verifyAdminToken } from "@/lib/auth";
+import { ADMIN_COOKIE_NAME, verifyAdminToken } from "@/lib/session";
 
 function hasTrustedOrigin(request: NextRequest) {
   const origin = request.headers.get("origin");
