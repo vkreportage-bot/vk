@@ -1,47 +1,71 @@
+import { timingSafeEqual } from "node:crypto";
+import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const COOKIE_NAME = "vk_admin_session";
+export const ADMIN_COOKIE_NAME = "vk_admin_session";
+const SESSION_MAX_AGE = 60 * 60 * 12;
 
 function secret() {
   const value = process.env.AUTH_SECRET;
-  if (!value) {
-    throw new Error("AUTH_SECRET is required for admin authentication.");
+  if (!value || value.length < 32) {
+    throw new Error("AUTH_SECRET must contain at least 32 characters.");
   }
   return new TextEncoder().encode(value);
+}
+
+function safeEqual(a: string, b: string) {
+  const left = Buffer.from(a);
+  const right = Buffer.from(b);
+  return left.length === right.length && timingSafeEqual(left, right);
+}
+
+export async function verifyAdminCredentials(email: string, password: string) {
+  const configuredEmail = process.env.ADMIN_EMAIL;
+  if (!configuredEmail || !safeEqual(email, configuredEmail)) return false;
+
+  const hash = process.env.ADMIN_PASSWORD_HASH;
+  if (hash) return bcrypt.compare(password, hash);
+
+  const legacyPassword = process.env.ADMIN_PASSWORD;
+  return Boolean(legacyPassword && safeEqual(password, legacyPassword));
+}
+
+export async function verifyAdminToken(token?: string) {
+  if (!token) return false;
+  try {
+    const { payload } = await jwtVerify(token, secret(), {
+      algorithms: ["HS256"]
+    });
+    return payload.role === "admin";
+  } catch {
+    return false;
+  }
 }
 
 export async function createAdminSession() {
   const token = await new SignJWT({ role: "admin" })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d")
+    .setExpirationTime("12h")
     .sign(secret());
 
   const store = await cookies();
-  store.set(COOKIE_NAME, token, {
+  store.set(ADMIN_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7
+    maxAge: SESSION_MAX_AGE
   });
 }
 
 export async function clearAdminSession() {
   const store = await cookies();
-  store.delete(COOKIE_NAME);
+  store.delete(ADMIN_COOKIE_NAME);
 }
 
 export async function isAdmin() {
-  try {
-    const store = await cookies();
-    const token = store.get(COOKIE_NAME)?.value;
-    if (!token) return false;
-
-    const { payload } = await jwtVerify(token, secret());
-    return payload.role === "admin";
-  } catch {
-    return false;
-  }
+  const store = await cookies();
+  return verifyAdminToken(store.get(ADMIN_COOKIE_NAME)?.value);
 }
