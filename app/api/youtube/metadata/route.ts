@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
+import { isAdmin } from "@/lib/auth";
 import { extractYouTubeId } from "@/lib/youtube";
 
 export async function GET(request: Request) {
+  if (!(await isAdmin())) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const url = new URL(request.url).searchParams.get("url") || "";
   const id = extractYouTubeId(url);
 
