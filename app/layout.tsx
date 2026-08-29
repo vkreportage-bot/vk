@@ -8,68 +8,43 @@ import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
-
   title: {
     default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
+    template: `%s — ${siteConfig.name}`
   },
-
   description: siteConfig.description,
   keywords: [...siteConfig.keywords],
-
   applicationName: siteConfig.name,
-
   alternates: {
-    canonical: "/",
+    canonical: "/"
   },
-
+  manifest: "/manifest.webmanifest",
   icons: {
-    icon: [
-      {
-        url: "/icons/icon-192.png",
-        sizes: "192x192",
-        type: "image/png",
-      },
-      {
-        url: "/icons/icon-512.png",
-        sizes: "512x512",
-        type: "image/png",
-      },
-    ],
-    apple: [
-      {
-        url: "/icons/apple-touch-icon.png",
-        sizes: "180x180",
-        type: "image/png",
-      },
-    ],
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }]
   },
-
   appleWebApp: {
     capable: true,
     title: siteConfig.name,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "black-translucent"
   },
-
   openGraph: {
     type: "website",
     locale: siteConfig.locale,
     url: siteConfig.url,
     siteName: siteConfig.name,
     title: siteConfig.title,
-    description: siteConfig.description,
+    description: siteConfig.description
   },
-
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
-    description: siteConfig.description,
-  },
+    description: siteConfig.description
+  }
 };
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#101010",
+  themeColor: "#101010"
 };
 
 export default function RootLayout({
