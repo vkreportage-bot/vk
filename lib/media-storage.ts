@@ -2,15 +2,15 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-const extensionsByType: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-  "image/avif": ".avif",
-  "video/mp4": ".mp4",
-  "video/webm": ".webm",
-  "video/quicktime": ".mov"
-};
+const allowedTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "video/mp4",
+  "video/webm",
+  "video/quicktime"
+]);
 
 export async function saveMediaLocally(file: File) {
   if (process.env.MEDIA_STORAGE !== "local") {
@@ -19,26 +19,22 @@ export async function saveMediaLocally(file: File) {
     );
   }
 
-  const extension = extensionsByType[file.type];
-  if (!extension) {
+  if (!allowedTypes.has(file.type)) {
     throw new Error("Unsupported media type.");
   }
 
   const maxMb = Number(process.env.MAX_UPLOAD_MB || 100);
-  if (!Number.isFinite(maxMb) || maxMb <= 0) {
-    throw new Error("Invalid MAX_UPLOAD_MB configuration.");
+  if (file.size > maxMb * 1024 * 1024) {
+    throw new Error(`File exceeds ${maxMb} MB.`);
   }
 
-  if (file.size <= 0 || file.size > maxMb * 1024 * 1024) {
-    throw new Error(`File must be between 1 byte and ${maxMb} MB.`);
-  }
-
+  const extension = path.extname(file.name).toLowerCase() || ".bin";
   const filename = `${randomUUID()}${extension}`;
   const uploadDir = path.join(process.cwd(), "public", "uploads");
 
   await mkdir(uploadDir, { recursive: true });
   const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(uploadDir, filename), buffer, { flag: "wx" });
+  await writeFile(path.join(uploadDir, filename), buffer);
 
   return `/uploads/${filename}`;
 }
