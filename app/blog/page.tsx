@@ -5,6 +5,7 @@ import { StructuredData } from "@/components/structured-data";
 import { getArticles } from "@/lib/repository";
 import { siteConfig } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Journal",
   description:
