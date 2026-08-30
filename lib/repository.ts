@@ -1,6 +1,6 @@
-import { demoCategories, demoProjects } from "@/lib/demo-data";
+import { demoArticles, demoCategories, demoProjects } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
-import type { Category, Project } from "@/types";
+import type { Article, Category, Project } from "@/types";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
@@ -69,4 +69,43 @@ export async function getCategories(): Promise<Category[]> {
   return (await prisma.category.findMany({
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }]
   })) as Category[];
+}
+
+export async function getArticles(options?: {
+  includeDrafts?: boolean;
+}): Promise<Article[]> {
+  if (!hasDatabase) {
+    return demoArticles
+      .filter((article) => options?.includeDrafts || article.published)
+      .sort(
+        (a, b) =>
+          (b.publishedAt?.getTime() ?? b.createdAt.getTime()) -
+          (a.publishedAt?.getTime() ?? a.createdAt.getTime())
+      );
+  }
+
+  return (await prisma.article.findMany({
+    where: options?.includeDrafts ? {} : { published: true },
+    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }]
+  })) as Article[];
+}
+
+export async function getArticleBySlug(
+  slug: string,
+  includeDrafts = false
+): Promise<Article | null> {
+  if (!hasDatabase) {
+    return (
+      demoArticles.find(
+        (article) => article.slug === slug && (includeDrafts || article.published)
+      ) ?? null
+    );
+  }
+
+  return (await prisma.article.findFirst({
+    where: {
+      slug,
+      ...(includeDrafts ? {} : { published: true })
+    }
+  })) as Article | null;
 }
