@@ -24,7 +24,7 @@ export default async function ProjectsPage({
 
   return (
     <div className="container-vk min-h-screen pb-24 pt-36 md:pt-44">
-      <header className="mb-12 border-b border-black/15 pb-10 md:mb-16">
+      <header className="mb-12  pb-10 md:mb-16">
         <p className="eyebrow mb-4">Portfolio</p>
 
         <h1 className="section-title">

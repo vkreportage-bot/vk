@@ -110,7 +110,7 @@ export default async function HomePage() {
         className="container-vk py-20 md:py-32"
         aria-labelledby="projects-title"
       >
-        <header className="mb-12 flex items-end justify-between gap-8 border-b hairline pb-6 md:mb-16">
+        <header className="mb-12 flex items-end justify-between gap-8 pb-6 md:mb-16">
           <div>
             <p className="eyebrow mb-4">Sélection</p>
 
@@ -275,7 +275,7 @@ export default async function HomePage() {
 
         <Link
           href="/contact"
-          className="group flex items-end justify-between gap-6 border-b hairline pb-7"
+          className="group flex items-end justify-between gap-6  pb-7"
         >
           <h2 className="text-5xl leading-none tracking-[-0.055em] md:text-7xl lg:text-8xl">
             Parlons-en.
