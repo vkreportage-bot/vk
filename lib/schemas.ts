@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+const optionalText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .transform((value) => value || null);
+
 export const categorySchema = z.object({
   name: z.string().trim().min(2).max(80),
   slug: z.string().trim().min(2).max(100)
@@ -17,6 +24,21 @@ export const projectSchema = z.object({
   featured: z.boolean().default(false),
   published: z.boolean().default(false),
   categoryIds: z.array(z.string()).default([])
+});
+
+export const articleSchema = z.object({
+  title: z.string().trim().min(3).max(160),
+  slug: z.string().trim().min(3).max(180),
+  excerpt: z.string().trim().min(20).max(320),
+  content: z.string().trim().min(40),
+  coverUrl: optionalText(2000),
+  coverAlt: optionalText(180),
+  author: z.string().trim().min(2).max(100).default("VK"),
+  keywords: z.array(z.string().trim().min(1).max(80)).max(20).default([]),
+  metaTitle: optionalText(70),
+  metaDescription: optionalText(170),
+  published: z.boolean().default(false),
+  publishedAt: optionalText(40)
 });
 
 export const contactMessageSchema = z.object({
