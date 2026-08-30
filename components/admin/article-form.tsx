@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Trash2, Upload } from "lucide-react";
+import { ExternalLink, Eye, Trash2, Upload } from "lucide-react";
+import { BlogContent } from "@/components/blog-content";
 import { slugify } from "@/lib/utils";
 import type { Article } from "@/types";
 
 export function ArticleForm({ article }: { article?: Article }) {
   const [title, setTitle] = useState(article?.title ?? "");
   const [slug, setSlug] = useState(article?.slug ?? "");
+  const [content, setContent] = useState(article?.content ?? "");
   const [coverUrl, setCoverUrl] = useState(article?.coverUrl ?? "");
   const [message, setMessage] = useState("");
 
@@ -87,20 +89,41 @@ export function ArticleForm({ article }: { article?: Article }) {
           </span>
         </label>
 
-        <label className="block text-sm font-medium">
-          Contenu
-          <textarea
-            name="content"
-            defaultValue={article?.content}
-            required
-            rows={20}
-            className="mt-2 w-full rounded-lg border border-black/15 px-3 py-3 font-mono text-sm leading-6"
-            placeholder={"## Intertitre\n\nVotre paragraphe…\n\n- Élément de liste"}
-          />
-          <span className="mt-1 block text-xs font-normal text-black/40">
-            Markdown léger : ## titre, ### sous-titre, listes avec -, citation avec &gt;.
-          </span>
-        </label>
+        <div className="grid gap-5 xl:grid-cols-2">
+          <label className="block text-sm font-medium">
+            Contenu Markdown
+            <textarea
+              name="content"
+              value={content}
+              onChange={(event) => setContent(event.target.value)}
+              required
+              rows={24}
+              className="mt-2 min-h-[560px] w-full resize-y rounded-lg border border-black/15 px-3 py-3 font-mono text-sm leading-6"
+              placeholder={
+                "## Intertitre\n\nVotre paragraphe avec **du gras**, *de l’italique* et [un lien](https://example.com).\n\n- Élément de liste\n- Deuxième élément\n\n> Une citation\n\n```js\nconsole.log('VK');\n```"
+              }
+            />
+            <span className="mt-1 block text-xs font-normal leading-5 text-black/40">
+              Markdown complet avec React Markdown : titres, listes, liens, gras, italique, citations,
+              code, tableaux et listes de tâches.
+            </span>
+          </label>
+
+          <section aria-label="Aperçu Markdown" className="min-w-0">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Eye size={15} /> Aperçu en direct
+            </div>
+            <div className="mt-2 h-[560px] overflow-y-auto rounded-lg border border-black/10 bg-[#f7f5f0] p-5 md:p-6">
+              {content.trim() ? (
+                <BlogContent content={content} compact />
+              ) : (
+                <p className="text-sm leading-6 text-black/35">
+                  Commence à écrire dans l’éditeur pour afficher l’aperçu de l’article.
+                </p>
+              )}
+            </div>
+          </section>
+        </div>
 
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_220px]">
           <div>
