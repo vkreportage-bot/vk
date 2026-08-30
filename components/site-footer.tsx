@@ -18,8 +18,9 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <div className="flex gap-5 text-sm md:justify-center">
+        <div className="flex flex-wrap gap-5 text-sm md:justify-center">
           <Link href="/projects">Projets</Link>
+          <Link href="/blog">Journal</Link>
           <Link href="/about">À propos</Link>
           <Link href="/contact">Contact</Link>
         </div>
