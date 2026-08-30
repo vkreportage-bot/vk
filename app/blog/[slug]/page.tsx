@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : undefined;
 
   return {
-    title,
+    title: article.metaTitle ? { absolute: article.metaTitle } : article.title,
     description,
     keywords: article.keywords,
     alternates: { canonical: `/blog/${article.slug}` },
