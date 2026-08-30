@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { saveMediaLocally } from "@/lib/media-storage";
+import { saveMedia } from "@/lib/media-storage";
 
 export async function POST(request: Request) {
   if (!(await isAdmin())) {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing file." }, { status: 400 });
     }
 
-    const url = await saveMediaLocally(file);
+    const url = await saveMedia(file);
     return NextResponse.json({ url });
   } catch (error) {
     return NextResponse.json(
