@@ -9,6 +9,25 @@ const projectInclude = {
   media: { orderBy: { sortOrder: "asc" as const } }
 };
 
+function getDemoArticles(includeDrafts = false) {
+  return demoArticles
+    .filter((article) => includeDrafts || article.published)
+    .sort(
+      (a, b) =>
+        (b.publishedAt?.getTime() ?? b.createdAt.getTime()) -
+        (a.publishedAt?.getTime() ?? a.createdAt.getTime())
+    );
+}
+
+function isMissingArticleTable(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2021"
+  );
+}
+
 export async function getProjects(options?: {
   featured?: boolean;
   category?: string;
@@ -74,38 +93,41 @@ export async function getCategories(): Promise<Category[]> {
 export async function getArticles(options?: {
   includeDrafts?: boolean;
 }): Promise<Article[]> {
-  if (!hasDatabase) {
-    return demoArticles
-      .filter((article) => options?.includeDrafts || article.published)
-      .sort(
-        (a, b) =>
-          (b.publishedAt?.getTime() ?? b.createdAt.getTime()) -
-          (a.publishedAt?.getTime() ?? a.createdAt.getTime())
-      );
-  }
+  if (!hasDatabase) return getDemoArticles(Boolean(options?.includeDrafts));
 
-  return (await prisma.article.findMany({
-    where: options?.includeDrafts ? {} : { published: true },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }]
-  })) as Article[];
+  try {
+    return (await prisma.article.findMany({
+      where: options?.includeDrafts ? {} : { published: true },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }]
+    })) as Article[];
+  } catch (error) {
+    if (isMissingArticleTable(error)) {
+      return getDemoArticles(Boolean(options?.includeDrafts));
+    }
+    throw error;
+  }
 }
 
 export async function getArticleBySlug(
   slug: string,
   includeDrafts = false
 ): Promise<Article | null> {
-  if (!hasDatabase) {
-    return (
-      demoArticles.find(
-        (article) => article.slug === slug && (includeDrafts || article.published)
-      ) ?? null
-    );
-  }
+  const demoArticle = () =>
+    demoArticles.find(
+      (article) => article.slug === slug && (includeDrafts || article.published)
+    ) ?? null;
 
-  return (await prisma.article.findFirst({
-    where: {
-      slug,
-      ...(includeDrafts ? {} : { published: true })
-    }
-  })) as Article | null;
+  if (!hasDatabase) return demoArticle();
+
+  try {
+    return (await prisma.article.findFirst({
+      where: {
+        slug,
+        ...(includeDrafts ? {} : { published: true })
+      }
+    })) as Article | null;
+  } catch (error) {
+    if (isMissingArticleTable(error)) return demoArticle();
+    throw error;
+  }
 }
