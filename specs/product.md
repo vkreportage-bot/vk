@@ -6,6 +6,7 @@ Créer un portfolio premium pour un vidéaste amateur souhaitant :
 - montrer son travail ;
 - classer ses projets par catégorie ;
 - publier des projets comprenant photos, vidéos, ou les deux ;
+- publier des articles utiles autour de la réalisation vidéo ;
 - recevoir des demandes de contact ;
 - administrer lui-même son contenu.
 
@@ -37,6 +38,15 @@ Nom public : **VK**
 - vidéos ;
 - YouTube préféré pour la diffusion vidéo.
 
+### Journal / Blog
+- liste des articles publiés ;
+- fiche article éditoriale ;
+- contenu rendu dans le HTML serveur ;
+- image de couverture facultative et texte alternatif ;
+- auteur, date de publication, mots-clés ;
+- métadonnées SEO propres à chaque article ;
+- liens vers les projets et le contact.
+
 ### À propos
 - présentation courte du vidéaste et de l'approche.
 
@@ -57,14 +67,17 @@ Fonctions :
 - upload photo ;
 - upload vidéo local pour développement ;
 - ajouter une vidéo YouTube ;
-- consulter les projets publiés et brouillons.
+- consulter les projets publiés et brouillons ;
+- créer / modifier / publier / dépublier / supprimer un article ;
+- gérer la couverture, l'alt, les mots-clés et les métadonnées SEO d'un article.
 
 ## Règles médias
 
 - Un projet peut contenir 0..n photos.
 - Un projet peut contenir 0..n vidéos.
 - Un projet peut mélanger photos et vidéos.
-- La couverture est obligatoire avant publication.
+- La couverture est obligatoire avant publication d'un projet.
+- La couverture d'un article est facultative.
 - Les médias ont un `sortOrder`.
 - Les miniatures portfolio conservent toutes le même ratio.
 
@@ -74,4 +87,5 @@ Fonctions :
 - espace client ;
 - commentaires ;
 - multi-utilisateur ;
+- taxonomie éditoriale avancée ;
 - upload automatique d'une vidéo vers le compte YouTube via OAuth.

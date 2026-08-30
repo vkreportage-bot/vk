@@ -40,9 +40,30 @@ Relation projet ↔ catégorie : many-to-many.
 - `sortOrder`
 - timestamp
 
+## Article
+
+- `id`
+- `title`
+- `slug` unique
+- `excerpt`
+- `content` texte long, Markdown léger
+- `coverUrl?`
+- `coverAlt?`
+- `author`
+- `keywords[]`
+- `metaTitle?`
+- `metaDescription?`
+- `published`
+- `publishedAt?`
+- timestamps
+
+Les articles sont autonomes dans le MVP. Une taxonomie dédiée pourra être ajoutée plus tard si le volume éditorial la justifie.
+
 ## Contraintes produit
 
 - slug projet unique ;
 - slug catégorie unique ;
+- slug article unique ;
 - suppression projet => suppression de ses médias DB ;
+- seuls les articles `published = true` sont exposés dans `/blog`, les pages article et le sitemap ;
 - suppression physique des fichiers à ajouter avec le provider de stockage production.

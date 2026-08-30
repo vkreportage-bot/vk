@@ -1,4 +1,4 @@
-import type { Category, Project } from "@/types";
+import type { Article, Category, Project } from "@/types";
 
 export const demoCategories: Category[] = [
   { id: "cat-wedding", name: "Mariages", slug: "mariages" },
@@ -106,5 +106,38 @@ export const demoProjects: Project[] = [
         sortOrder: 1
       }
     ]
+  }
+];
+
+export const demoArticles: Article[] = [
+  {
+    id: "a-1",
+    title: "Créer un film qui raconte vraiment une journée",
+    slug: "creer-un-film-qui-raconte-vraiment-une-journee",
+    excerpt:
+      "Quelques principes simples pour construire un film naturel, lisible et émotionnel sans transformer la journée en tournage.",
+    content: `## Filmer ce qui existe déjà
+
+Une image forte vient rarement d'une mise en scène compliquée. Le point de départ consiste à observer les gestes, les regards, les silences et les détails qui donnent une identité au moment.
+
+## Donner une place au son
+
+Le son direct, les voix et l'ambiance d'un lieu racontent autant que les images. Ils permettent de conserver une trace plus précise de l'expérience vécue.
+
+## Construire au montage
+
+Le montage ne sert pas seulement à raccourcir. Il organise les rythmes, les respirations et les transitions pour faire émerger une histoire claire sans la surcharger.`,
+    coverUrl:
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1800&q=85",
+    coverAlt: "Caméra de cinéma utilisée pour un tournage documentaire",
+    author: "VK",
+    keywords: ["vidéaste", "film", "réalisation vidéo", "storytelling"],
+    metaTitle: "Créer un film naturel et cinématographique | VK",
+    metaDescription:
+      "Comment construire un film naturel et émotionnel : observation, son direct et montage au service de l'histoire.",
+    published: true,
+    publishedAt: new Date("2026-08-30T10:00:00.000Z"),
+    createdAt: new Date("2026-08-30T10:00:00.000Z"),
+    updatedAt: new Date("2026-08-30T10:00:00.000Z")
   }
 ];

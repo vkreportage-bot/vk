@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, FolderKanban, LayoutDashboard, LogOut, Mail, Plus, Tags } from "lucide-react";
+import { BookOpen, ExternalLink, FolderKanban, LayoutDashboard, LogOut, Mail, Plus, Tags } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/projects", label: "Projets", icon: FolderKanban },
+  { href: "/admin/blog", label: "Blog", icon: BookOpen },
   { href: "/admin/categories", label: "Catégories", icon: Tags },
   { href: "/admin/messages", label: "Messages", icon: Mail },
 ];
@@ -20,6 +21,9 @@ function isActive(pathname: string, href: string) {
 function pageLabel(pathname: string) {
   if (pathname.startsWith("/admin/messages")) return "Messages";
   if (pathname.startsWith("/admin/categories")) return "Catégories";
+  if (pathname.startsWith("/admin/blog/new")) return "Nouvel article";
+  if (pathname.startsWith("/admin/blog/")) return "Modifier l’article";
+  if (pathname.startsWith("/admin/blog")) return "Blog";
   if (pathname.startsWith("/admin/projects/new")) return "Nouveau projet";
   if (pathname.startsWith("/admin/projects/")) return "Modifier le projet";
   if (pathname.startsWith("/admin/projects")) return "Projets";
@@ -55,9 +59,12 @@ export function AdminShell({ children, unreadCount = 0 }: { children: React.Reac
             })}
           </nav>
 
-          <div className="mt-8 border-t border-black/10 pt-5">
+          <div className="mt-8 space-y-2 border-t border-black/10 pt-5">
             <Link href="/admin/projects/new" className="flex min-h-11 items-center gap-3 rounded-xl bg-white px-3 text-sm font-medium shadow-[0_1px_0_rgba(0,0,0,0.05)] ring-1 ring-black/10 transition hover:bg-black hover:text-white">
               <Plus size={17} /> Nouveau projet
+            </Link>
+            <Link href="/admin/blog/new" className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium text-black/55 transition hover:bg-black/[0.045] hover:text-black">
+              <Plus size={17} /> Nouvel article
             </Link>
           </div>
 
@@ -91,13 +98,13 @@ export function AdminShell({ children, unreadCount = 0 }: { children: React.Reac
       </div>
 
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-[#f7f6f2]/95 px-2 pb-[max(8px,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden">
-        <div className="mx-auto grid max-w-lg grid-cols-4 gap-1">
+        <div className="mx-auto grid max-w-lg grid-cols-5 gap-1">
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = isActive(pathname, item.href);
             const showUnread = item.href === "/admin/messages" && unreadCount > 0;
             return (
-              <Link key={item.href} href={item.href} className={cn("relative flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[10px] font-medium transition", active ? "bg-black text-white" : "text-black/45")}>
+              <Link key={item.href} href={item.href} className={cn("relative flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl text-[9px] font-medium transition", active ? "bg-black text-white" : "text-black/45")}>
                 <span className="relative"><Icon size={18} />{showUnread ? <span className={cn("absolute -right-3 -top-2 inline-flex min-w-5 items-center justify-center rounded-full px-1 py-0.5 text-[9px] font-bold", active ? "bg-white text-black" : "bg-black text-white")}>{unreadCount > 9 ? "9+" : unreadCount}</span> : null}</span>
                 {item.label}
               </Link>

@@ -11,6 +11,10 @@ const links = [
     label: "Projets",
   },
   {
+    href: "/blog",
+    label: "Journal",
+  },
+  {
     href: "/about",
     label: "À propos",
   },
@@ -60,7 +64,7 @@ export function SiteHeader() {
         {/* NAVIGATION */}
         <nav
           aria-label="Navigation principale"
-          className="flex items-center gap-5 sm:gap-7 md:gap-10"
+          className="flex items-center gap-3 sm:gap-6 md:gap-9"
         >
           {links.map((link) => {
             const active =
@@ -76,12 +80,14 @@ export function SiteHeader() {
                   `
                     relative
                     py-2
-                    text-[10px]
+                    text-[9px]
                     font-semibold
                     uppercase
-                    tracking-[0.17em]
+                    tracking-[0.14em]
                     transition-opacity
                     duration-200
+                    sm:text-[10px]
+                    sm:tracking-[0.17em]
                     md:text-[11px]
                   `,
 
