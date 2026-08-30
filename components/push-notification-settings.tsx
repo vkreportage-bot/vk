@@ -4,39 +4,56 @@ import { useEffect, useState } from "react";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+
   const base64 = (base64String + padding)
     .replace(/-/g, "+")
     .replace(/_/g, "/");
 
   const rawData = window.atob(base64);
 
-  return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
+  return Uint8Array.from(
+    [...rawData].map((char) => char.charCodeAt(0))
+  );
 }
 
 export function PushNotificationSettings() {
   const [supported, setSupported] = useState<boolean | null>(null);
   const [permission, setPermission] =
     useState<NotificationPermission>("default");
+
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const isSupported =
-      "serviceWorker" in navigator &&
-      "PushManager" in window &&
-      "Notification" in window;
+    const timeout = window.setTimeout(async () => {
+      const isSupported =
+        "serviceWorker" in navigator &&
+        "PushManager" in window &&
+        "Notification" in window;
 
-    setSupported(isSupported);
+      setSupported(isSupported);
 
-    if (!isSupported) return;
+      if (!isSupported) {
+        return;
+      }
 
-    setPermission(Notification.permission);
+      setPermission(Notification.permission);
 
-    navigator.serviceWorker.ready
-      .then((registration) => registration.pushManager.getSubscription())
-      .then((subscription) => setSubscribed(Boolean(subscription)))
-      .catch(() => setSubscribed(false));
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const subscription =
+          await registration.pushManager.getSubscription();
+
+        setSubscribed(Boolean(subscription));
+      } catch {
+        setSubscribed(false);
+      }
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
   }, []);
 
   async function enable() {
@@ -44,52 +61,68 @@ export function PushNotificationSettings() {
     setMessage("");
 
     try {
-      const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      const publicKey =
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 
       if (!publicKey) {
         throw new Error("Clé VAPID publique manquante.");
       }
 
-      const nextPermission = await Notification.requestPermission();
+      const nextPermission =
+        await Notification.requestPermission();
+
       setPermission(nextPermission);
 
       if (nextPermission !== "granted") {
-        throw new Error("Les notifications n'ont pas été autorisées.");
+        throw new Error(
+          "Les notifications n'ont pas été autorisées."
+        );
       }
 
-      const registration = await navigator.serviceWorker.ready;
+      const registration =
+        await navigator.serviceWorker.ready;
 
-      let subscription = await registration.pushManager.getSubscription();
+      let subscription =
+        await registration.pushManager.getSubscription();
 
       if (!subscription) {
-        subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicKey),
-        });
+        subscription =
+          await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey:
+              urlBase64ToUint8Array(publicKey),
+          });
       }
 
       const json = subscription.toJSON();
 
-      const response = await fetch("/api/admin/push/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: json.keys?.p256dh,
-            auth: json.keys?.auth,
+      const response = await fetch(
+        "/api/admin/push/subscribe",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-      });
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: json.keys?.p256dh,
+              auth: json.keys?.auth,
+            },
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Impossible d'enregistrer cet appareil.");
+        throw new Error(
+          "Impossible d'enregistrer cet appareil."
+        );
       }
 
       setSubscribed(true);
-      setMessage("Notifications activées sur cet appareil.");
+      setMessage(
+        "Notifications activées sur cet appareil."
+      );
     } catch (error) {
       setMessage(
         error instanceof Error
@@ -106,8 +139,11 @@ export function PushNotificationSettings() {
     setMessage("");
 
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+      const registration =
+        await navigator.serviceWorker.ready;
+
+      const subscription =
+        await registration.pushManager.getSubscription();
 
       if (subscription) {
         await fetch("/api/admin/push/subscribe", {
@@ -124,9 +160,14 @@ export function PushNotificationSettings() {
       }
 
       setSubscribed(false);
-      setMessage("Notifications désactivées sur cet appareil.");
+
+      setMessage(
+        "Notifications désactivées sur cet appareil."
+      );
     } catch {
-      setMessage("Impossible de désactiver les notifications.");
+      setMessage(
+        "Impossible de désactiver les notifications."
+      );
     } finally {
       setBusy(false);
     }
@@ -139,7 +180,8 @@ export function PushNotificationSettings() {
   if (!supported) {
     return (
       <p className="text-sm text-black/50">
-        Les notifications Push ne sont pas disponibles sur ce navigateur.
+        Les notifications Push ne sont pas disponibles
+        sur ce navigateur.
       </p>
     );
   }
@@ -148,9 +190,13 @@ export function PushNotificationSettings() {
     <section className="border border-black/10 p-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="text-sm font-medium">Notifications messages</h2>
+          <h2 className="text-sm font-medium">
+            Notifications messages
+          </h2>
+
           <p className="mt-1 text-sm text-black/45">
-            Recevoir une alerte lorsqu'un visiteur envoie un message.
+            Recevoir une alerte lorsqu&apos;un visiteur
+            envoie un message.
           </p>
         </div>
 
@@ -170,12 +216,16 @@ export function PushNotificationSettings() {
 
       {permission === "denied" ? (
         <p className="mt-4 text-sm text-red-700">
-          Les notifications sont bloquées dans les réglages du navigateur.
+          Les notifications sont bloquées dans les
+          réglages du navigateur.
         </p>
       ) : null}
 
       {message ? (
-        <p className="mt-4 text-sm text-black/55" role="status">
+        <p
+          className="mt-4 text-sm text-black/55"
+          role="status"
+        >
           {message}
         </p>
       ) : null}

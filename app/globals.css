@@ -31,26 +31,34 @@ body {
   color: #fff;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+/*
+ * Important :
+ * ne pas définir `color: inherit` ici hors d'un layer Tailwind.
+ * Cela empêcherait les classes text-white, text-black/50, etc.
+ * de fonctionner correctement sur les <Link>.
+ */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
 }
 
 .container-vk {
-  width: min(100% - 32px, 1440px);
+  width: min(100% - 32px, 1200px);
   margin-inline: auto;
 }
 
 @media (min-width: 768px) {
   .container-vk {
-    width: min(100% - 72px, 1440px);
+    width: min(100% - 72px, 1200px);
   }
 }
 

@@ -18,3 +18,19 @@ export const projectSchema = z.object({
   published: z.boolean().default(false),
   categoryIds: z.array(z.string()).default([])
 });
+
+export const contactMessageSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  email: z.string().trim().email().max(254),
+  phone: z
+    .string()
+    .trim()
+    .max(30)
+    .transform((value) => value || null),
+  subject: z
+    .string()
+    .trim()
+    .max(160)
+    .transform((value) => value || null),
+  message: z.string().trim().min(10).max(5000)
+});

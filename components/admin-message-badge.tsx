@@ -35,14 +35,21 @@ export function useUnreadMessages() {
         await badgeNavigator.clearAppBadge();
       }
     } catch {
-      // Le badge reste simplement sur sa dernière valeur connue.
+      // On conserve la dernière valeur connue.
     }
   }, []);
 
   useEffect(() => {
-    void refresh();
+    // On décale l'appel initial pour éviter un setState synchrone
+    // directement déclenché depuis l'effet.
+    const timeout = window.setTimeout(() => {
+      void refresh();
+    }, 0);
 
-    const onFocus = () => void refresh();
+    const onFocus = () => {
+      void refresh();
+    };
+
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         void refresh();
@@ -53,6 +60,7 @@ export function useUnreadMessages() {
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
+      window.clearTimeout(timeout);
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
