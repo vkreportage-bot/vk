@@ -30,3 +30,21 @@ export type Project = {
   categories: Category[];
   media: MediaItem[];
 };
+
+export type Article = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+  author: string;
+  keywords: string[];
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  published: boolean;
+  publishedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
