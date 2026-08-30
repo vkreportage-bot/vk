@@ -130,7 +130,7 @@ export function ProjectCard({
         </div>
 
         {/* CONTENU */}
-        <div className="border-b border-black/15 pb-4 pt-4">
+        <div className="pb-4 pt-4">
           <div className="flex items-start justify-between gap-4">
             <h2
               className="
@@ -167,6 +167,7 @@ export function ProjectCard({
                 text-[13px]
                 leading-5
                 text-black/45
+                
               "
             >
               {project.excerpt}

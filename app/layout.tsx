@@ -78,9 +78,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body suppressHydrationWarning>
-        <SiteHeader />
+      
         <main>{children}</main>
-        <SiteFooter />
+    
         <PWARegister />
       </body>
     </html>

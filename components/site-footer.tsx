@@ -13,9 +13,9 @@ export function SiteFooter() {
       <div className="container-vk grid gap-10 py-10 md:grid-cols-3 md:items-end">
         <div>
           <p className="text-3xl font-black tracking-[-0.08em]">VK</p>
-          <p className="mt-2 max-w-sm text-sm text-[var(--muted)]">
+          {/* <p className="mt-2 max-w-sm text-sm text-[var(--muted)]">
             Films de mariage, événementiel et histoires visuelles.
-          </p>
+          </p> */}
         </div>
 
         <div className="flex flex-wrap gap-5 text-sm md:justify-center">
@@ -26,7 +26,7 @@ export function SiteFooter() {
         </div>
 
         <div className="text-sm text-[var(--muted)] md:text-right">
-          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          {/* <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a> */}
           <p className="mt-1">© {new Date().getFullYear()} VK</p>
         </div>
       </div>

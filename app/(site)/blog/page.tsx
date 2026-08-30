@@ -6,6 +6,7 @@ import { getArticles } from "@/lib/repository";
 import { siteConfig } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Journal",
   description:
@@ -51,19 +52,19 @@ export default async function BlogPage() {
         }}
       />
 
-      <header className="mb-14  pb-8 md:mb-20 md:pb-10">
+      <header className="mb-14 pb-8 md:mb-20 md:pb-10">
         <p className="eyebrow mb-5">
           Journal / VK
         </p>
 
-        <div className="grid gap-8 md:grid-cols-12 md:items-end">
-          <h1 className="section-title md:col-span-8">
+        <div className="max-w-5xl">
+          <h1 className="section-title">
             Notes de tournage,
             <br />
             méthode et regard.
           </h1>
 
-          <p className="max-w-md text-base leading-7 text-[var(--muted)] md:col-span-4 md:justify-self-end md:text-lg md:leading-8">
+          <p className="mt-8 max-w-2xl text-base leading-7 text-[var(--muted)] md:mt-10 md:text-lg md:leading-8">
             Réalisation, narration, son, montage et réflexions autour de la
             manière de filmer des moments réels.
           </p>

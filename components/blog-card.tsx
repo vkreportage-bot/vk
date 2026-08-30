@@ -16,7 +16,7 @@ const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
 
 export function BlogCard({ article }: BlogCardProps) {
   return (
-    <article>
+    <article className="min-w-0">
       <Link
         href={`/blog/${article.slug}`}
         className="group block"
@@ -28,8 +28,19 @@ export function BlogCard({ article }: BlogCardProps) {
               src={article.coverUrl}
               alt={article.coverAlt || article.title}
               fill
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+              sizes="
+                (min-width: 1280px) 25vw,
+                (min-width: 1024px) 33vw,
+                (min-width: 640px) 50vw,
+                100vw
+              "
+              className="
+                object-cover
+                transition-transform
+                duration-700
+                ease-out
+                group-hover:scale-[1.025]
+              "
             />
           ) : (
             <div className="flex h-full items-center justify-center">
@@ -41,32 +52,41 @@ export function BlogCard({ article }: BlogCardProps) {
         </div>
 
         {/* CONTENT */}
-        <div className="mt-5 border-t hairline pt-4">
-          <div className="flex items-start justify-between gap-5">
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/40">
+        <div className="mt-4 border-t hairline pt-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-black/40">
                 {article.publishedAt
                   ? dateFormatter.format(article.publishedAt)
                   : "Journal VK"}
               </p>
 
-              <h2 className="mt-3 text-2xl font-medium leading-[1.04] tracking-[-0.04em] md:text-3xl">
+              <h2 className="mt-2 text-lg font-medium leading-[1.08] tracking-[-0.035em] lg:text-xl">
                 {article.title}
               </h2>
             </div>
 
             <ArrowUpRight
-              size={18}
+              size={16}
               aria-hidden="true"
-              className="mt-1 shrink-0 text-black/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-black"
+              className="
+                mt-0.5
+                shrink-0
+                text-black/30
+                transition-all
+                duration-300
+                group-hover:-translate-y-0.5
+                group-hover:translate-x-0.5
+                group-hover:text-black
+              "
             />
           </div>
 
-          {article.excerpt && (
-            <p className="mt-4 line-clamp-2 max-w-md text-sm leading-6 text-[var(--muted)]">
+          {/* {article.excerpt && (
+            <p className="mt-3 line-clamp-2 text-xs leading-5 text-[var(--muted)]">
               {article.excerpt}
             </p>
-          )}
+          )} */}
         </div>
       </Link>
     </article>

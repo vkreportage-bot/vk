@@ -71,9 +71,11 @@ body {
 
 .section-title {
   font-size: clamp(2.2rem, 5vw, 5rem);
-  line-height: 0.95;
+  line-height: 1.2;
   letter-spacing: -0.055em;
   font-weight: 650;
+ 
+  
 }
 
 .eyebrow {

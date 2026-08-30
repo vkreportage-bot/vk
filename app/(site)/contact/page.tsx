@@ -67,7 +67,7 @@ export default async function ContactPage({
         </p>
       </header>
 
-      <div className="mt-14 grid gap-12 border-t hairline pt-10 md:grid-cols-12 md:gap-8">
+      <div className="mt-14 grid gap-12  pt-14  md:grid-cols-12 md:gap-8">
         <aside className="md:col-span-3">
           <p className="text-xs uppercase tracking-[0.16em] text-black/40">
             Contact direct
