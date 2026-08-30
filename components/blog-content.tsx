@@ -1,118 +1,108 @@
-import type { ReactNode } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
-function renderInline(text: string): ReactNode[] {
-  const parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g);
-
-  return parts.filter(Boolean).map((part, index) => {
-    const bold = part.match(/^\*\*([^*]+)\*\*$/);
-    if (bold) return <strong key={index}>{bold[1]}</strong>;
-
-    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-    if (link) {
-      const [, label, rawHref] = link;
-      const href = /^(https?:\/\/|\/|mailto:)/.test(rawHref) ? rawHref : "#";
-      const external = href.startsWith("http");
-
-      return (
-        <a
-          key={index}
-          href={href}
-          target={external ? "_blank" : undefined}
-          rel={external ? "noreferrer" : undefined}
-          className="underline decoration-black/25 underline-offset-4 transition hover:decoration-black"
-        >
-          {label}
-        </a>
-      );
-    }
-
-    return part;
-  });
+function safeHref(href?: string) {
+  if (!href) return "#";
+  return /^(https?:\/\/|\/|#|mailto:|tel:)/.test(href) ? href : "#";
 }
 
-export function BlogContent({ content }: { content: string }) {
-  const blocks = content.trim().split(/\n{2,}/);
+type BlogContentProps = {
+  content: string;
+  compact?: boolean;
+};
+
+export function BlogContent({ content, compact = false }: BlogContentProps) {
+  const h2Class = compact
+    ? "pt-3 text-2xl font-medium leading-tight tracking-[-0.035em] text-black"
+    : "pt-6 text-3xl font-medium leading-[1.05] tracking-[-0.045em] text-black md:text-5xl";
+
+  const h3Class = compact
+    ? "pt-2 text-xl font-medium leading-tight tracking-[-0.03em] text-black"
+    : "pt-3 text-2xl font-medium leading-tight tracking-[-0.035em] text-black md:text-3xl";
 
   return (
-    <div className="space-y-8 text-[17px] leading-8 text-black/75 md:text-lg md:leading-9">
-      {blocks.map((block, index) => {
-        const trimmed = block.trim();
-        if (!trimmed) return null;
-
-        if (trimmed === "---") {
-          return <hr key={index} className="my-12 border-black/15" />;
-        }
-
-        if (trimmed.startsWith("### ")) {
-          return (
-            <h3
-              key={index}
-              className="pt-3 text-2xl font-medium leading-tight tracking-[-0.035em] text-black md:text-3xl"
-            >
-              {renderInline(trimmed.slice(4))}
-            </h3>
-          );
-        }
-
-        if (trimmed.startsWith("## ")) {
-          return (
-            <h2
-              key={index}
-              className="pt-6 text-3xl font-medium leading-[1.05] tracking-[-0.045em] text-black md:text-5xl"
-            >
-              {renderInline(trimmed.slice(3))}
-            </h2>
-          );
-        }
-
-        const lines = trimmed.split("\n");
-
-        if (lines.every((line) => line.trim().startsWith("- "))) {
-          return (
-            <ul key={index} className="space-y-3 pl-5">
-              {lines.map((line, lineIndex) => (
-                <li key={lineIndex} className="list-disc pl-2">
-                  {renderInline(line.trim().slice(2))}
-                </li>
-              ))}
-            </ul>
-          );
-        }
-
-        if (lines.every((line) => /^\d+\.\s/.test(line.trim()))) {
-          return (
-            <ol key={index} className="space-y-3 pl-5">
-              {lines.map((line, lineIndex) => (
-                <li key={lineIndex} className="list-decimal pl-2">
-                  {renderInline(line.trim().replace(/^\d+\.\s/, ""))}
-                </li>
-              ))}
-            </ol>
-          );
-        }
-
-        if (lines.every((line) => line.trim().startsWith("> "))) {
-          return (
+    <div
+      className={
+        compact
+          ? "space-y-5 text-sm leading-7 text-black/70"
+          : "space-y-8 text-[17px] leading-8 text-black/75 md:text-lg md:leading-9"
+      }
+    >
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h1: ({ children }) => <h2 className={h2Class}>{children}</h2>,
+          h2: ({ children }) => <h2 className={h2Class}>{children}</h2>,
+          h3: ({ children }) => <h3 className={h3Class}>{children}</h3>,
+          h4: ({ children }) => (
+            <h4 className="pt-2 text-lg font-semibold leading-tight tracking-[-0.02em] text-black md:text-xl">
+              {children}
+            </h4>
+          ),
+          p: ({ children }) => <p>{children}</p>,
+          strong: ({ children }) => <strong className="font-semibold text-black">{children}</strong>,
+          em: ({ children }) => <em className="italic">{children}</em>,
+          ul: ({ children }) => <ul className="space-y-2 pl-5">{children}</ul>,
+          ol: ({ children }) => <ol className="space-y-2 pl-5">{children}</ol>,
+          li: ({ children }) => <li className="list-outside pl-2 marker:text-black/35">{children}</li>,
+          blockquote: ({ children }) => (
             <blockquote
-              key={index}
-              className="border-l border-black/30 py-1 pl-6 text-xl leading-9 tracking-[-0.02em] text-black md:text-2xl"
+              className={
+                compact
+                  ? "border-l border-black/25 py-1 pl-4 text-base leading-7 text-black"
+                  : "border-l border-black/30 py-1 pl-6 text-xl leading-9 tracking-[-0.02em] text-black md:text-2xl"
+              }
             >
-              {renderInline(lines.map((line) => line.trim().slice(2)).join(" "))}
+              {children}
             </blockquote>
-          );
-        }
+          ),
+          a: ({ href, children }) => {
+            const safe = safeHref(href);
+            const external = safe.startsWith("http");
 
-        return (
-          <p key={index}>
-            {lines.map((line, lineIndex) => (
-              <span key={lineIndex}>
-                {renderInline(line)}
-                {lineIndex < lines.length - 1 ? <br /> : null}
-              </span>
-            ))}
-          </p>
-        );
-      })}
+            return (
+              <a
+                href={safe}
+                target={external ? "_blank" : undefined}
+                rel={external ? "noreferrer" : undefined}
+                className="underline decoration-black/25 underline-offset-4 transition hover:decoration-black"
+              >
+                {children}
+              </a>
+            );
+          },
+          hr: () => <hr className="my-10 border-black/15" />,
+          code: ({ children }) => (
+            <code className="rounded bg-black/[0.06] px-1.5 py-0.5 font-mono text-[0.88em] text-black">
+              {children}
+            </code>
+          ),
+          pre: ({ children }) => (
+            <pre className="overflow-x-auto rounded-xl bg-black p-4 text-sm leading-6 text-white [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-inherit">
+              {children}
+            </pre>
+          ),
+          table: ({ children }) => (
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left text-sm">{children}</table>
+            </div>
+          ),
+          thead: ({ children }) => <thead className="border-b border-black/20 text-black">{children}</thead>,
+          tbody: ({ children }) => <tbody className="divide-y divide-black/10">{children}</tbody>,
+          th: ({ children }) => <th className="px-3 py-2 font-semibold">{children}</th>,
+          td: ({ children }) => <td className="px-3 py-2 align-top">{children}</td>,
+          img: ({ src, alt }) => (
+            <img
+              src={src}
+              alt={alt ?? ""}
+              loading="lazy"
+              className="my-8 h-auto w-full rounded-sm object-cover"
+            />
+          )
+        }}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }

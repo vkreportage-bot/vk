@@ -19,7 +19,7 @@ export default function AboutPage() {
       </header>
 
       {/* INTRODUCTION */}
-      <section className="grid gap-6 border-t hairline py-8 md:grid-cols-12 md:gap-10 md:py-10 lg:gap-14">
+      <section className="grid gap-6  py-8 md:grid-cols-12 md:gap-10 md:py-10 lg:gap-14">
         <p className="text-sm text-(--muted) md:col-span-3">
           VK / Photographe & vidéaste
         </p>
