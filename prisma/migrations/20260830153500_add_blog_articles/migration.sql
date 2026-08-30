@@ -8,7 +8,7 @@ CREATE TABLE "Article" (
     "coverUrl" TEXT,
     "coverAlt" TEXT,
     "author" TEXT NOT NULL DEFAULT 'VK',
-    "keywords" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "keywords" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
     "metaTitle" TEXT,
     "metaDescription" TEXT,
     "published" BOOLEAN NOT NULL DEFAULT false,
