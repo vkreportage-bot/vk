@@ -1,6 +1,6 @@
 import { demoArticles, demoCategories, demoProjects } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
-import type { Article, Category, Project } from "@/types";
+import type { Article, Category, HeroSettings, Project } from "@/types";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
@@ -19,7 +19,7 @@ function getDemoArticles(includeDrafts = false) {
     );
 }
 
-function isMissingArticleTable(error: unknown) {
+function isMissingTable(error: unknown) {
   return (
     typeof error === "object" &&
     error !== null &&
@@ -90,6 +90,19 @@ export async function getCategories(): Promise<Category[]> {
   })) as Category[];
 }
 
+export async function getHeroSettings(): Promise<HeroSettings | null> {
+  if (!hasDatabase) return null;
+
+  try {
+    return (await prisma.heroSettings.findUnique({
+      where: { id: "home" }
+    })) as HeroSettings | null;
+  } catch (error) {
+    if (isMissingTable(error)) return null;
+    throw error;
+  }
+}
+
 export async function getArticles(options?: {
   includeDrafts?: boolean;
 }): Promise<Article[]> {
@@ -101,7 +114,7 @@ export async function getArticles(options?: {
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }]
     })) as Article[];
   } catch (error) {
-    if (isMissingArticleTable(error)) {
+    if (isMissingTable(error)) {
       return getDemoArticles(Boolean(options?.includeDrafts));
     }
     throw error;
@@ -127,7 +140,7 @@ export async function getArticleBySlug(
       }
     })) as Article | null;
   } catch (error) {
-    if (isMissingArticleTable(error)) return demoArticle();
+    if (isMissingTable(error)) return demoArticle();
     throw error;
   }
 }
