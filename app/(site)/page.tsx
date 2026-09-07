@@ -5,7 +5,7 @@ import { ArrowDownRight } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { ProjectGrid } from "@/components/project-grid";
 import { StructuredData } from "@/components/structured-data";
-import { getCategories, getProjects } from "@/lib/repository";
+import { getCategories, getHeroSettings, getProjects } from "@/lib/repository";
 import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -26,9 +26,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [projects, categories] = await Promise.all([
+  const [projects, categories, hero] = await Promise.all([
     getProjects({ featured: true }),
-    getCategories()
+    getCategories(),
+    getHeroSettings()
   ]);
 
   return (
@@ -71,7 +72,7 @@ export default async function HomePage() {
       />
 
       {/* HERO */}
-      <Hero />
+      <Hero hero={hero} />
 
       {/* INTRODUCTION */}
       <section className="container-vk border-b hairline py-20 md:py-32">
@@ -275,7 +276,7 @@ export default async function HomePage() {
 
         <Link
           href="/contact"
-          className="group flex items-end justify-between gap-6  pb-7"
+          className="group flex items-end justify-between gap-6 pb-7"
         >
           <h2 className="text-5xl leading-none tracking-[-0.055em] md:text-7xl lg:text-8xl">
             Parlons-en.

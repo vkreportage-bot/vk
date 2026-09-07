@@ -9,6 +9,14 @@ export type MediaItem = {
   sortOrder: number;
 };
 
+export type HeroSettings = {
+  id: string;
+  mediaType: MediaType | null;
+  mediaUrl: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type Category = {
   id: string;
   name: string;
