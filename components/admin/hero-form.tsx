@@ -9,7 +9,8 @@ import {
   LoaderCircle,
   Save,
   Trash2,
-  Upload
+  Upload,
+  Youtube
 } from "lucide-react";
 import {
   HERO_IMAGE_MAX_BYTES,
@@ -22,6 +23,7 @@ import {
   getHeroMediaTypeFromMime,
   validateHeroFileBasics
 } from "@/lib/hero-upload-rules";
+import { extractYouTubeId, youtubeHeroEmbedUrl } from "@/lib/youtube";
 import type { HeroSettings, MediaType } from "@/types";
 
 type UploadInfo = {
@@ -151,10 +153,18 @@ export function HeroForm({
   initialHero: HeroSettings | null;
 }) {
   const router = useRouter();
+  const initialYoutubeUrl =
+    initialHero?.mediaType === "VIDEO" &&
+    initialHero.mediaUrl &&
+    extractYouTubeId(initialHero.mediaUrl)
+      ? initialHero.mediaUrl
+      : "";
+
   const [mediaType, setMediaType] = useState<MediaType | null>(
     initialHero?.mediaType ?? null
   );
   const [mediaUrl, setMediaUrl] = useState(initialHero?.mediaUrl ?? "");
+  const [youtubeUrl, setYoutubeUrl] = useState(initialYoutubeUrl);
   const [uploadInfo, setUploadInfo] = useState<UploadInfo | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -233,6 +243,7 @@ export function HeroForm({
       const url = await uploadToStorage(file, validated.mediaType);
       setMediaType(validated.mediaType);
       setMediaUrl(url);
+      setYoutubeUrl("");
       setStatus({
         kind: "success",
         text: "Média envoyé. Cliquez sur « Enregistrer le hero » pour le publier."
@@ -245,6 +256,27 @@ export function HeroForm({
     } finally {
       setUploading(false);
     }
+  }
+
+  function useYoutubeVideo() {
+    const value = youtubeUrl.trim();
+    const videoId = extractYouTubeId(value);
+
+    if (!videoId) {
+      setStatus({
+        kind: "error",
+        text: "Lien YouTube invalide. Utilisez une URL youtube.com, youtu.be ou Shorts."
+      });
+      return;
+    }
+
+    setMediaType("VIDEO");
+    setMediaUrl(value);
+    setUploadInfo(null);
+    setStatus({
+      kind: "success",
+      text: "Vidéo YouTube sélectionnée. Cliquez sur « Enregistrer le hero » pour la publier."
+    });
   }
 
   async function saveHero() {
@@ -281,6 +313,7 @@ export function HeroForm({
   function removeMedia() {
     setMediaType(null);
     setMediaUrl("");
+    setYoutubeUrl("");
     setUploadInfo(null);
     setStatus({
       kind: "info",
@@ -289,6 +322,8 @@ export function HeroForm({
   }
 
   const hasMedia = Boolean(mediaType && mediaUrl);
+  const youtubePreviewUrl =
+    mediaType === "VIDEO" && mediaUrl ? youtubeHeroEmbedUrl(mediaUrl) : null;
 
   return (
     <div className="grid gap-8 py-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
@@ -305,7 +340,11 @@ export function HeroForm({
 
           {hasMedia ? (
             <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-black/50">
-              {mediaType === "VIDEO" ? "Vidéo" : "Image"}
+              {youtubePreviewUrl
+                ? "YouTube"
+                : mediaType === "VIDEO"
+                  ? "Vidéo"
+                  : "Image"}
             </span>
           ) : null}
         </div>
@@ -314,14 +353,25 @@ export function HeroForm({
           {hasMedia ? (
             <>
               {mediaType === "VIDEO" ? (
-                <video
-                  src={mediaUrl}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                youtubePreviewUrl ? (
+                  <iframe
+                    src={youtubePreviewUrl}
+                    title="Aperçu de la vidéo YouTube du hero"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    tabIndex={-1}
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.7778vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
+                  />
+                ) : (
+                  <video
+                    src={mediaUrl}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                )
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -373,7 +423,7 @@ export function HeroForm({
             <div>
               <h2 className="text-base font-semibold">Média du hero</h2>
               <p className="mt-1 text-xs leading-5 text-black/45">
-                Le type image ou vidéo est détecté automatiquement.
+                Importez un fichier ou utilisez une vidéo YouTube.
               </p>
             </div>
           </div>
@@ -406,6 +456,45 @@ export function HeroForm({
               }}
             />
           </label>
+
+          <div className="my-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/30">
+            <span className="h-px flex-1 bg-black/10" />
+            ou
+            <span className="h-px flex-1 bg-black/10" />
+          </div>
+
+          <div>
+            <label htmlFor="hero-youtube-url" className="text-sm font-medium">
+              Vidéo YouTube
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="hero-youtube-url"
+                type="url"
+                value={youtubeUrl}
+                onChange={(event) => setYoutubeUrl(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    useYoutubeVideo();
+                  }
+                }}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="min-w-0 flex-1 rounded-xl border border-black/15 px-3 py-2.5 text-sm outline-none transition focus:border-black/40"
+              />
+              <button
+                type="button"
+                onClick={useYoutubeVideo}
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-black px-3 text-xs font-semibold text-white transition hover:bg-black/80"
+              >
+                <Youtube size={15} />
+                Utiliser
+              </button>
+            </div>
+            <p className="mt-2 text-xs leading-5 text-black/40">
+              Liens youtube.com, youtu.be, Shorts et URLs d’intégration acceptés.
+            </p>
+          </div>
 
           {uploadInfo ? (
             <div className="mt-4 rounded-xl bg-black/[0.035] p-4 text-xs text-black/55">
@@ -455,10 +544,20 @@ export function HeroForm({
                 </p>
               </div>
             </div>
+
+            <div className="flex gap-3">
+              <Youtube size={17} className="mt-0.5 shrink-0 text-black/70" />
+              <div>
+                <p className="font-semibold text-black/80">YouTube</p>
+                <p>
+                  Vidéo publique ou non répertoriée avec intégration autorisée. Lecture automatique, muette et en boucle dans le hero.
+                </p>
+              </div>
+            </div>
           </div>
 
           <p className="mt-4 border-t border-black/10 pt-4 text-xs leading-5 text-black/40">
-            Pour de bonnes performances, privilégiez un cadrage paysage 16:9 et une vidéo courte, sans piste audio utile.
+            Pour de bonnes performances, privilégiez un cadrage paysage 16:9. Pour YouTube, la vidéo doit autoriser la lecture intégrée sur des sites externes.
           </p>
         </section>
 
