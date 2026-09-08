@@ -13,8 +13,7 @@ const navigation = [
     label: "À propos",
     href: "/about"
   },
-  
-   {
+  {
     label: "Journal",
     href: "/blog"
   },
@@ -27,8 +26,12 @@ const navigation = [
 export function SiteHeader() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const isHome = pathname === "/";
+  const homeHeaderClass =
+    isHome && !menuOpen
+      ? "text-white mix-blend-difference"
+      : "text-[var(--dark)]";
 
-  // Bloque le scroll de la page quand le menu est ouvert
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
 
@@ -39,7 +42,6 @@ export function SiteHeader() {
     };
   }, [menuOpen]);
 
-  // Fermeture avec Escape
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -62,17 +64,15 @@ export function SiteHeader() {
     <>
       <header className="fixed inset-x-0 top-0 z-[100]">
         <div className="container-vk flex h-24 items-center justify-between md:h-28">
-          {/* LOGO */}
           <Link
             href="/"
             aria-label="VK — Accueil"
             onClick={closeMenu}
-            className="relative z-[120] text-xl font-bold tracking-[-0.06em] text-[var(--dark)]"
+            className={`relative z-[120] text-xl font-bold tracking-[-0.06em] transition-colors duration-300 ${homeHeaderClass}`}
           >
             VK
           </Link>
 
-          {/* NAVIGATION DESKTOP */}
           <nav
             aria-label="Navigation principale"
             className="hidden items-center gap-10 md:flex"
@@ -89,8 +89,8 @@ export function SiteHeader() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={[
-                    "text-xs font-semibold uppercase tracking-[0.18em]",
-                    "text-[var(--dark)] transition-opacity duration-300",
+                    "text-xs font-semibold uppercase tracking-[0.18em] transition-opacity duration-300",
+                    homeHeaderClass,
                     "hover:opacity-50",
                     active ? "opacity-50" : ""
                   ].join(" ")}
@@ -101,14 +101,13 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* BOUTON MOBILE */}
           <button
             type="button"
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
             onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-[120] flex h-11 w-11 items-center justify-center text-[var(--dark)] md:hidden"
+            className={`relative z-[120] flex h-11 w-11 items-center justify-center transition-colors duration-300 md:hidden ${homeHeaderClass}`}
           >
             <span className="relative block h-4 w-6">
               <span
@@ -135,19 +134,17 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {/* MENU MOBILE */}
-    <div
-  id="mobile-navigation"
-  aria-hidden={!menuOpen}
-  className={[
-    "fixed inset-0 z-[90] md:hidden",
-    "transition-opacity duration-500",
-    menuOpen
-      ? "pointer-events-auto opacity-100"
-      : "pointer-events-none opacity-0"
-  ].join(" ")}
->
-        {/* FOND DÉPOLI */}
+      <div
+        id="mobile-navigation"
+        aria-hidden={!menuOpen}
+        className={[
+          "fixed inset-0 z-[90] md:hidden",
+          "transition-opacity duration-500",
+          menuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        ].join(" ")}
+      >
         <div
           className={[
             "absolute inset-0",
@@ -158,7 +155,6 @@ export function SiteHeader() {
           ].join(" ")}
         />
 
-        {/* LÉGER VOILE */}
         <div
           className={[
             "absolute inset-0 bg-white/10",
@@ -167,7 +163,6 @@ export function SiteHeader() {
           ].join(" ")}
         />
 
-        {/* CONTENU */}
         <div className="container-vk relative flex min-h-[100svh] flex-col pb-10 pt-28">
           <nav
             aria-label="Navigation mobile"
@@ -216,7 +211,6 @@ export function SiteHeader() {
             </div>
           </nav>
 
-          {/* FOOTER */}
           <div
             className={[
               "flex items-end justify-between gap-6",
