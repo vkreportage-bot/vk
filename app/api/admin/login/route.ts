@@ -12,7 +12,10 @@ export async function POST(request: Request) {
     email !== process.env.ADMIN_EMAIL ||
     password !== process.env.ADMIN_PASSWORD
   ) {
-    return NextResponse.redirect(new URL("/admin/login", request.url), 303);
+    return NextResponse.redirect(
+      new URL("/admin/login?error=credentials", request.url),
+      303
+    );
   }
 
   await createAdminSession();
