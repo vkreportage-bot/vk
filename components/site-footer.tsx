@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { siteConfig } from "@/lib/site";
 
 const localLinks = [
   { label: "Paris", href: "/photographe-videaste/paris" },
