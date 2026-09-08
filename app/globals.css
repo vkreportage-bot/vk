@@ -74,8 +74,6 @@ body {
   line-height: 1.2;
   letter-spacing: -0.055em;
   font-weight: 650;
- 
-  
 }
 
 .eyebrow {
@@ -87,4 +85,21 @@ body {
 
 .hairline {
   border-color: var(--line);
+}
+
+/* Empêche Chrome/Safari d'appliquer leur fond bleu aux champs préremplis. */
+.login-input:-webkit-autofill,
+.login-input:-webkit-autofill:hover,
+.login-input:-webkit-autofill:focus,
+.login-input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground);
+  -webkit-box-shadow: 0 0 0 1000px #faf9f7 inset;
+  box-shadow: 0 0 0 1000px #faf9f7 inset;
+  caret-color: var(--foreground);
+  transition: background-color 9999s ease-out 0s;
+}
+
+.login-input:autofill {
+  box-shadow: 0 0 0 1000px #faf9f7 inset;
+  color: var(--foreground);
 }
