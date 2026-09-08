@@ -12,6 +12,7 @@ import {
   Upload,
   Youtube
 } from "lucide-react";
+import { HeroMedia } from "@/components/hero-media";
 import {
   HERO_IMAGE_MAX_BYTES,
   HERO_IMAGE_MIN_HEIGHT,
@@ -23,7 +24,7 @@ import {
   getHeroMediaTypeFromMime,
   validateHeroFileBasics
 } from "@/lib/hero-upload-rules";
-import { extractYouTubeId, youtubeHeroEmbedUrl } from "@/lib/youtube";
+import { extractYouTubeId } from "@/lib/youtube";
 import type { HeroSettings, MediaType } from "@/types";
 
 type UploadInfo = {
@@ -42,6 +43,20 @@ type Status = {
 function formatBytes(bytes: number) {
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} Ko`;
   return `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
+}
+
+function hasMinimumDimensions(
+  width: number,
+  height: number,
+  landscapeWidth: number,
+  landscapeHeight: number
+) {
+  const longEdge = Math.max(width, height);
+  const shortEdge = Math.min(width, height);
+  const requiredLongEdge = Math.max(landscapeWidth, landscapeHeight);
+  const requiredShortEdge = Math.min(landscapeWidth, landscapeHeight);
+
+  return longEdge >= requiredLongEdge && shortEdge >= requiredShortEdge;
 }
 
 function readImageMetadata(file: File) {
@@ -96,11 +111,15 @@ async function validateHeroFile(file: File) {
     const metadata = await readImageMetadata(file);
 
     if (
-      metadata.width < HERO_IMAGE_MIN_WIDTH ||
-      metadata.height < HERO_IMAGE_MIN_HEIGHT
+      !hasMinimumDimensions(
+        metadata.width,
+        metadata.height,
+        HERO_IMAGE_MIN_WIDTH,
+        HERO_IMAGE_MIN_HEIGHT
+      )
     ) {
       throw new Error(
-        `Image trop petite : ${HERO_IMAGE_MIN_WIDTH} × ${HERO_IMAGE_MIN_HEIGHT} px minimum.`
+        `Image trop petite : ${HERO_IMAGE_MIN_WIDTH} × ${HERO_IMAGE_MIN_HEIGHT} px en paysage ou ${HERO_IMAGE_MIN_HEIGHT} × ${HERO_IMAGE_MIN_WIDTH} px en portrait minimum.`
       );
     }
 
@@ -118,11 +137,15 @@ async function validateHeroFile(file: File) {
   const metadata = await readVideoMetadata(file);
 
   if (
-    metadata.width < HERO_VIDEO_MIN_WIDTH ||
-    metadata.height < HERO_VIDEO_MIN_HEIGHT
+    !hasMinimumDimensions(
+      metadata.width,
+      metadata.height,
+      HERO_VIDEO_MIN_WIDTH,
+      HERO_VIDEO_MIN_HEIGHT
+    )
   ) {
     throw new Error(
-      `Vidéo trop petite : ${HERO_VIDEO_MIN_WIDTH} × ${HERO_VIDEO_MIN_HEIGHT} px minimum.`
+      `Vidéo trop petite : ${HERO_VIDEO_MIN_WIDTH} × ${HERO_VIDEO_MIN_HEIGHT} px en paysage ou ${HERO_VIDEO_MIN_HEIGHT} × ${HERO_VIDEO_MIN_WIDTH} px en portrait minimum.`
     );
   }
 
@@ -322,8 +345,9 @@ export function HeroForm({
   }
 
   const hasMedia = Boolean(mediaType && mediaUrl);
-  const youtubePreviewUrl =
-    mediaType === "VIDEO" && mediaUrl ? youtubeHeroEmbedUrl(mediaUrl) : null;
+  const isYoutubeMedia = Boolean(
+    mediaType === "VIDEO" && mediaUrl && extractYouTubeId(mediaUrl)
+  );
 
   return (
     <div className="grid gap-8 py-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
@@ -340,7 +364,7 @@ export function HeroForm({
 
           {hasMedia ? (
             <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-black/50">
-              {youtubePreviewUrl
+              {isYoutubeMedia
                 ? "YouTube"
                 : mediaType === "VIDEO"
                   ? "Vidéo"
@@ -350,38 +374,11 @@ export function HeroForm({
         </div>
 
         <div className="relative aspect-[16/10] min-h-[420px] overflow-hidden rounded-2xl bg-[#e9e7e1] text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)] ring-1 ring-black/10">
-          {hasMedia ? (
+          {hasMedia && mediaType && mediaUrl ? (
             <>
-              {mediaType === "VIDEO" ? (
-                youtubePreviewUrl ? (
-                  <iframe
-                    src={youtubePreviewUrl}
-                    title="Aperçu de la vidéo YouTube du hero"
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    tabIndex={-1}
-                    className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.7778vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
-                  />
-                ) : (
-                  <video
-                    src={mediaUrl}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                )
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={mediaUrl}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-              )}
-              <div className="absolute inset-0 bg-black/20 backdrop-blur-[4px]" />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-black/40" />
+              <HeroMedia mediaType={mediaType} mediaUrl={mediaUrl} />
+              <div className="absolute inset-0 bg-black/22" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-black/45" />
             </>
           ) : null}
 
@@ -423,7 +420,7 @@ export function HeroForm({
             <div>
               <h2 className="text-base font-semibold">Média du hero</h2>
               <p className="mt-1 text-xs leading-5 text-black/45">
-                Importez un fichier ou utilisez une vidéo YouTube.
+                Importez un fichier paysage ou portrait, ou utilisez une vidéo YouTube.
               </p>
             </div>
           </div>
@@ -442,7 +439,7 @@ export function HeroForm({
               {uploading ? "Envoi en cours…" : "Choisir une image ou une vidéo"}
             </span>
             <span className="mt-1 text-xs text-black/40">
-              JPG, PNG, WebP, AVIF, MP4 ou WebM
+              Paysage ou portrait · JPG, PNG, WebP, AVIF, MP4 ou WebM
             </span>
             <input
               type="file"
@@ -492,7 +489,7 @@ export function HeroForm({
               </button>
             </div>
             <p className="mt-2 text-xs leading-5 text-black/40">
-              Liens youtube.com, youtu.be, Shorts et URLs d’intégration acceptés.
+              Liens youtube.com, youtu.be, Shorts et URLs d’intégration acceptés. Les Shorts utilisent automatiquement le cadrage portrait.
             </p>
           </div>
 
@@ -504,6 +501,9 @@ export function HeroForm({
                 {uploadInfo.duration !== undefined
                   ? ` · ${uploadInfo.duration.toFixed(1)} s`
                   : ""}
+              </p>
+              <p className="mt-1 text-black/40">
+                {uploadInfo.height > uploadInfo.width ? "Format portrait détecté" : "Format paysage détecté"}
               </p>
             </div>
           ) : null}
@@ -530,7 +530,7 @@ export function HeroForm({
               <div>
                 <p className="font-semibold text-black/80">Image</p>
                 <p>
-                  JPG, PNG, WebP ou AVIF · {Math.round(HERO_IMAGE_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_IMAGE_MIN_WIDTH} × {HERO_IMAGE_MIN_HEIGHT} px minimum.
+                  JPG, PNG, WebP ou AVIF · {Math.round(HERO_IMAGE_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_IMAGE_MIN_WIDTH} × {HERO_IMAGE_MIN_HEIGHT} px paysage ou {HERO_IMAGE_MIN_HEIGHT} × {HERO_IMAGE_MIN_WIDTH} px portrait minimum.
                 </p>
               </div>
             </div>
@@ -540,7 +540,7 @@ export function HeroForm({
               <div>
                 <p className="font-semibold text-black/80">Vidéo</p>
                 <p>
-                  MP4 ou WebM · {Math.round(HERO_VIDEO_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_VIDEO_MIN_WIDTH} × {HERO_VIDEO_MIN_HEIGHT} px minimum · {HERO_VIDEO_MAX_DURATION_SECONDS} s max.
+                  MP4 ou WebM · {Math.round(HERO_VIDEO_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_VIDEO_MIN_WIDTH} × {HERO_VIDEO_MIN_HEIGHT} px paysage ou {HERO_VIDEO_MIN_HEIGHT} × {HERO_VIDEO_MIN_WIDTH} px portrait minimum · {HERO_VIDEO_MAX_DURATION_SECONDS} s max.
                 </p>
               </div>
             </div>
@@ -550,14 +550,14 @@ export function HeroForm({
               <div>
                 <p className="font-semibold text-black/80">YouTube</p>
                 <p>
-                  Vidéo publique ou non répertoriée avec intégration autorisée. Lecture automatique, muette et en boucle dans le hero.
+                  Vidéo publique ou non répertoriée avec intégration autorisée. Les Shorts sont affichés en portrait avec un fond plein écran dérivé du média.
                 </p>
               </div>
             </div>
           </div>
 
           <p className="mt-4 border-t border-black/10 pt-4 text-xs leading-5 text-black/40">
-            Pour de bonnes performances, privilégiez un cadrage paysage 16:9. Pour YouTube, la vidéo doit autoriser la lecture intégrée sur des sites externes.
+            Le Hero détecte automatiquement l’orientation. En desktop, un média portrait reste lisible au premier plan avec un fond agrandi et flouté ; sur mobile, il occupe naturellement davantage de l’écran.
           </p>
         </section>
 
