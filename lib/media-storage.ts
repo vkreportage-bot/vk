@@ -65,12 +65,12 @@ async function saveLocally(file: File) {
 
 async function saveToSupabase(file: File) {
   const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
   const bucket = process.env.SUPABASE_MEDIA_BUCKET || "media";
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !supabaseSecretKey) {
     throw new Error(
-      "Supabase Storage is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY."
+      "Supabase Storage is not configured. Add SUPABASE_URL and SUPABASE_SECRET_KEY."
     );
   }
 
@@ -90,8 +90,8 @@ async function saveToSupabase(file: File) {
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${serviceRoleKey}`,
-        apikey: serviceRoleKey,
+        Authorization: `Bearer ${supabaseSecretKey}`,
+        apikey: supabaseSecretKey,
         "x-upsert": "false"
       },
       body,
