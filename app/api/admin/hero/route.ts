@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { extractYouTubeId } from "@/lib/youtube";
 import type { MediaType } from "@/types";
 
 function isMissingTable(error: unknown) {
@@ -18,6 +19,21 @@ function isValidMediaType(value: unknown): value is MediaType {
 
 function isValidMediaUrl(value: string) {
   return value.startsWith("/") || /^https?:\/\//i.test(value);
+}
+
+function isYouTubeHost(value: string) {
+  try {
+    const hostname = new URL(value).hostname.replace(/^www\./, "");
+    return (
+      hostname === "youtu.be" ||
+      hostname === "youtube.com" ||
+      hostname.endsWith(".youtube.com") ||
+      hostname === "youtube-nocookie.com" ||
+      hostname.endsWith(".youtube-nocookie.com")
+    );
+  } catch {
+    return false;
+  }
 }
 
 export async function PUT(request: Request) {
@@ -53,6 +69,22 @@ export async function PUT(request: Request) {
         { error: "L’URL du média est invalide." },
         { status: 400 }
       );
+    }
+
+    if (mediaUrl && isYouTubeHost(mediaUrl)) {
+      if (!extractYouTubeId(mediaUrl)) {
+        return NextResponse.json(
+          { error: "Le lien YouTube est invalide." },
+          { status: 400 }
+        );
+      }
+
+      if (mediaType !== "VIDEO") {
+        return NextResponse.json(
+          { error: "Une vidéo YouTube doit être enregistrée comme vidéo." },
+          { status: 400 }
+        );
+      }
     }
 
     const hero = await prisma.heroSettings.upsert({
