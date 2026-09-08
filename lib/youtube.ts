@@ -47,3 +47,19 @@ export function youtubeHeroEmbedUrl(input: string) {
 export function isYouTubeUrl(input: string) {
   return Boolean(extractYouTubeId(input));
 }
+
+export function isYouTubeShortUrl(input: string) {
+  try {
+    const url = new URL(input);
+    const hostname = url.hostname.replace(/^www\./, "");
+    const isYouTubeHost =
+      hostname === "youtube.com" ||
+      hostname.endsWith(".youtube.com") ||
+      hostname === "youtube-nocookie.com" ||
+      hostname.endsWith(".youtube-nocookie.com");
+
+    return isYouTubeHost && url.pathname.startsWith("/shorts/");
+  } catch {
+    return false;
+  }
+}
