@@ -22,6 +22,22 @@ function encodeStoragePath(path: string) {
     .join("/");
 }
 
+function getSupabaseAdminHeaders(apiKey: string) {
+  const headers: Record<string, string> = {
+    apikey: apiKey,
+    "Content-Type": "application/json"
+  };
+
+  // Legacy service_role keys are JWTs and can be sent as Bearer tokens.
+  // New sb_secret_* keys are opaque API keys, not JWTs, so they must not
+  // be used as Authorization: Bearer credentials.
+  if (!apiKey.startsWith("sb_secret_")) {
+    headers.Authorization = `Bearer ${apiKey}`;
+  }
+
+  return headers;
+}
+
 export async function POST(request: Request) {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -79,14 +95,15 @@ export async function POST(request: Request) {
     }
 
     const supabaseUrl = process.env.SUPABASE_URL?.replace(/\/$/, "");
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const adminKey =
+      process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
     const bucket = process.env.SUPABASE_MEDIA_BUCKET || "media";
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!supabaseUrl || !adminKey) {
       return NextResponse.json(
         {
           error:
-            "Supabase Storage n’est pas configuré. Ajoutez SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY."
+            "Supabase Storage n’est pas configuré. Ajoutez SUPABASE_URL et SUPABASE_SECRET_KEY (ou SUPABASE_SERVICE_ROLE_KEY)."
         },
         { status: 503 }
       );
@@ -101,11 +118,7 @@ export async function POST(request: Request) {
       `${storageBase}/object/upload/sign/${encodedBucket}/${encodedPath}`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${serviceRoleKey}`,
-          apikey: serviceRoleKey,
-          "Content-Type": "application/json"
-        },
+        headers: getSupabaseAdminHeaders(adminKey),
         body: "{}",
         cache: "no-store"
       }
@@ -123,7 +136,7 @@ export async function POST(request: Request) {
           error:
             signedData.message ||
             signedData.error ||
-            "Impossible de créer l’URL d’upload Supabase. Vérifiez que le bucket existe."
+            "Impossible de créer l’URL d’upload Supabase. Vérifiez la clé serveur et le bucket."
         },
         { status: 502 }
       );
