@@ -46,7 +46,7 @@ export function HeroMedia({ mediaType, mediaUrl }: HeroMediaProps) {
             referrerPolicy="strict-origin-when-cross-origin"
             tabIndex={-1}
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 aspect-[9/16] h-[105%] w-auto -translate-x-1/2 -translate-y-1/2 border-0 md:left-[72%] md:h-[94%]"
+            className="pointer-events-none absolute left-1/2 top-1/2 aspect-[9/16] h-[105%] w-auto -translate-x-1/2 -translate-y-1/2 border-0 md:left-[76%] md:h-[92%] xl:left-[78%]"
           />
         </>
       );
@@ -90,7 +90,7 @@ export function HeroMedia({ mediaType, mediaUrl }: HeroMediaProps) {
             playsInline
             preload="metadata"
             aria-hidden="true"
-            className="absolute left-1/2 top-1/2 h-[105%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-contain md:left-[72%] md:h-[94%]"
+            className="absolute left-1/2 top-1/2 h-[105%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-contain md:left-[76%] md:h-[92%] xl:left-[78%]"
           />
         </>
       );
@@ -128,7 +128,7 @@ export function HeroMedia({ mediaType, mediaUrl }: HeroMediaProps) {
           src={mediaUrl}
           alt=""
           aria-hidden="true"
-          className="absolute left-1/2 top-1/2 h-[105%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-contain md:left-[72%] md:h-[94%]"
+          className="absolute left-1/2 top-1/2 h-[105%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-contain md:left-[76%] md:h-[92%] xl:left-[78%]"
         />
       </>
     );
