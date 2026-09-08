@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { ArrowDownRight } from "lucide-react";
 import type { HeroSettings } from "@/types";
+import { youtubeHeroEmbedUrl } from "@/lib/youtube";
 
 export function Hero({ hero }: { hero?: HeroSettings | null }) {
   const hasMedia = Boolean(hero?.mediaUrl && hero.mediaType);
+  const youtubeUrl =
+    hero?.mediaType === "VIDEO" && hero.mediaUrl
+      ? youtubeHeroEmbedUrl(hero.mediaUrl)
+      : null;
   const textClass = hasMedia ? "text-white" : "text-[var(--dark)]";
   const eyebrowClass = hasMedia ? "text-white/70" : "text-[var(--muted)]";
   const bodyClass = hasMedia ? "text-white/80" : "text-[var(--muted)]";
@@ -17,17 +22,29 @@ export function Hero({ hero }: { hero?: HeroSettings | null }) {
       {hasMedia ? (
         <>
           {hero?.mediaType === "VIDEO" ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 h-full w-full object-cover"
-              aria-hidden="true"
-            >
-              <source src={hero.mediaUrl ?? undefined} />
-            </video>
+            youtubeUrl ? (
+              <iframe
+                src={youtubeUrl}
+                title="Vidéo d’arrière-plan VK"
+                allow="autoplay; encrypted-media; picture-in-picture"
+                referrerPolicy="strict-origin-when-cross-origin"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.7778vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
+              />
+            ) : (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="absolute inset-0 h-full w-full object-cover"
+                aria-hidden="true"
+              >
+                <source src={hero.mediaUrl ?? undefined} />
+              </video>
+            )
           ) : (
             // Hero media can come from Supabase Storage or another admin-configured URL.
             // A native img avoids coupling this CMS field to next/image remotePatterns.
