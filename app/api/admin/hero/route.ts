@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -99,6 +100,10 @@ export async function PUT(request: Request) {
         mediaUrl: mediaUrl || null
       }
     });
+
+    // The homepage can be statically cached in production. Invalidate it as soon
+    // as the admin publishes a new Hero so the new image/video appears immediately.
+    revalidatePath("/");
 
     return NextResponse.json({ hero });
   } catch (error) {
