@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MediaType } from "@/types";
 import {
   isYouTubeShortUrl,
@@ -17,6 +17,10 @@ export function HeroMedia({ mediaType, mediaUrl }: HeroMediaProps) {
   const [portrait, setPortrait] = useState(() =>
     youtubeUrl ? isYouTubeShortUrl(mediaUrl) : false
   );
+
+  useEffect(() => {
+    setPortrait(youtubeUrl ? isYouTubeShortUrl(mediaUrl) : false);
+  }, [mediaUrl, youtubeUrl]);
 
   const updateOrientation = (width: number, height: number) => {
     setPortrait(height > width);
@@ -42,7 +46,7 @@ export function HeroMedia({ mediaType, mediaUrl }: HeroMediaProps) {
             referrerPolicy="strict-origin-when-cross-origin"
             tabIndex={-1}
             aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[105%] aspect-[9/16] -translate-x-1/2 -translate-y-1/2 border-0 md:left-[72%] md:h-[94%]"
+            className="pointer-events-none absolute left-1/2 top-1/2 aspect-[9/16] h-[105%] w-auto -translate-x-1/2 -translate-y-1/2 border-0 md:left-[72%] md:h-[94%]"
           />
         </>
       );
