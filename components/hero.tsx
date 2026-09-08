@@ -1,14 +1,10 @@
 import Link from "next/link";
 import { ArrowDownRight } from "lucide-react";
+import { HeroMedia } from "@/components/hero-media";
 import type { HeroSettings } from "@/types";
-import { youtubeHeroEmbedUrl } from "@/lib/youtube";
 
 export function Hero({ hero }: { hero?: HeroSettings | null }) {
   const hasMedia = Boolean(hero?.mediaUrl && hero.mediaType);
-  const youtubeUrl =
-    hero?.mediaType === "VIDEO" && hero.mediaUrl
-      ? youtubeHeroEmbedUrl(hero.mediaUrl)
-      : null;
   const textClass = hasMedia ? "text-white" : "text-[var(--dark)]";
   const eyebrowClass = hasMedia ? "text-white/70" : "text-[var(--muted)]";
   const bodyClass = hasMedia ? "text-white/80" : "text-[var(--muted)]";
@@ -19,53 +15,13 @@ export function Hero({ hero }: { hero?: HeroSettings | null }) {
         hasMedia ? "bg-black" : "bg-[var(--light)]"
       } ${textClass}`}
     >
-      {hasMedia ? (
+      {hasMedia && hero?.mediaType && hero.mediaUrl ? (
         <>
-          {hero?.mediaType === "VIDEO" ? (
-            youtubeUrl ? (
-              <iframe
-                src={youtubeUrl}
-                title="Vidéo d’arrière-plan VK"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                referrerPolicy="strict-origin-when-cross-origin"
-                tabIndex={-1}
-                aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.7778vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0"
-              />
-            ) : (
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                className="absolute inset-0 h-full w-full object-cover"
-                aria-hidden="true"
-              >
-                <source src={hero.mediaUrl ?? undefined} />
-              </video>
-            )
-          ) : (
-            // Hero media can come from Supabase Storage or another admin-configured URL.
-            // A native img avoids coupling this CMS field to next/image remotePatterns.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={hero?.mediaUrl ?? undefined}
-              alt=""
-              fetchPriority="high"
-              decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
-              aria-hidden="true"
-            />
-          )}
-
+          <HeroMedia mediaType={hero.mediaType} mediaUrl={hero.mediaUrl} />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/22" />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-black/20 backdrop-blur-[4px]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-black/40"
+            className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-black/45"
           />
         </>
       ) : null}
