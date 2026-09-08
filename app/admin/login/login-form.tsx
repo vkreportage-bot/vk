@@ -51,7 +51,7 @@ export function LoginForm({ hasError = false }: LoginFormProps) {
               required
               autoComplete="username"
               inputMode="email"
-              className="h-13 w-full rounded-2xl border border-black/10 bg-white/55 px-4 text-[15px] text-black outline-none transition duration-200 placeholder:text-black/25 hover:border-black/15 focus:border-black/30 focus:bg-white/75 focus:ring-4 focus:ring-black/[0.035]"
+              className="login-input h-13 w-full rounded-2xl border border-black/10 bg-white/55 px-4 text-[15px] text-black outline-none transition duration-200 placeholder:text-black/25 hover:border-black/15 focus:border-black/30 focus:bg-white/75 focus:ring-4 focus:ring-black/[0.035]"
               placeholder="votre@email.fr"
             />
           </label>
@@ -66,7 +66,7 @@ export function LoginForm({ hasError = false }: LoginFormProps) {
                 type={showPassword ? "text" : "password"}
                 required
                 autoComplete="current-password"
-                className="h-13 w-full rounded-2xl border border-black/10 bg-white/55 px-4 pr-13 text-[15px] text-black outline-none transition duration-200 placeholder:text-black/25 hover:border-black/15 focus:border-black/30 focus:bg-white/75 focus:ring-4 focus:ring-black/[0.035]"
+                className="login-input h-13 w-full rounded-2xl border border-black/10 bg-white/55 px-4 pr-13 text-[15px] text-black outline-none transition duration-200 placeholder:text-black/25 hover:border-black/15 focus:border-black/30 focus:bg-white/75 focus:ring-4 focus:ring-black/[0.035]"
                 placeholder="Votre mot de passe"
               />
               <button
