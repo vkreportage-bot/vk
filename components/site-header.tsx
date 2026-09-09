@@ -57,22 +57,22 @@ const desktopItemVariants = {
 const mobileListVariants = {
   closed: {
     transition: {
-      staggerChildren: 0.025,
+      staggerChildren: 0.02,
       staggerDirection: -1
     }
   },
   open: {
     transition: {
-      delayChildren: 0.06,
-      staggerChildren: 0.065
+      delayChildren: 0.08,
+      staggerChildren: 0.07
     }
   }
 };
 
 const mobileItemVariants = {
   closed: {
-    y: 34,
-    scale: 0.94,
+    y: 46,
+    scale: 0.93,
     opacity: 0
   },
   open: {
@@ -189,7 +189,7 @@ export function SiteHeader() {
 
   return (
     <>
-      {/* Desktop : drawer latéral sensible à la proximité de la souris */}
+      {/* Desktop */}
       <div className="hidden md:block">
         <AnimatePresence>
           {drawerOpen ? (
@@ -230,7 +230,6 @@ export function SiteHeader() {
             className="pointer-events-none absolute -left-28 top-[8%] h-72 w-72 rounded-full bg-white/45 blur-[100px]"
           />
 
-          {/* Rail visible quand le drawer est fermé / en approche */}
           <button
             type="button"
             aria-label={drawerOpen ? "Réduire le menu" : "Ouvrir le menu"}
@@ -324,147 +323,124 @@ export function SiteHeader() {
         </motion.aside>
       </div>
 
-      {/* Mobile : bouton flottant transparent */}
-      <motion.button
-        type="button"
-        aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-        aria-expanded={menuOpen}
-        aria-controls="mobile-navigation"
-        onClick={() => setMenuOpen((open) => !open)}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: "spring", stiffness: 420, damping: 24 }}
-        className={[
-          "fixed right-5 top-5 z-[140] flex h-14 w-14 items-center justify-center rounded-full text-black md:hidden",
-          "transition-all duration-300",
-          menuOpen
-            ? "border border-transparent bg-transparent shadow-none"
-            : "border border-white/35 bg-transparent shadow-[0_10px_30px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.45)]"
-        ].join(" ")}
-      >
-        <span className="relative block h-5 w-5">
-          <motion.span
-            className="absolute left-0 top-[6px] block h-px w-5 bg-current"
-            animate={menuOpen ? { y: 3, rotate: 45 } : { y: 0, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 360, damping: 22 }}
-          />
-          <motion.span
-            className="absolute left-0 top-[13px] block h-px w-5 bg-current"
-            animate={menuOpen ? { y: -4, rotate: -45 } : { y: 0, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 360, damping: 22 }}
-          />
-        </span>
-      </motion.button>
-
-      <AnimatePresence>
-        {menuOpen ? (
-          <motion.div
-            id="mobile-navigation"
-            className="fixed inset-0 z-[120] overflow-hidden md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.24, ease: "easeOut" }}
-          >
-            <motion.div
-              className="absolute inset-0 bg-white/[0.24] backdrop-blur-[26px] backdrop-saturate-150"
+      {/* Mobile : drawer bas -> haut, sans burger */}
+      <div className="md:hidden">
+        <AnimatePresence>
+          {menuOpen ? (
+            <motion.button
+              type="button"
+              aria-label="Fermer le menu"
+              onClick={closeMobileMenu}
+              className="fixed inset-0 z-[118] bg-black/[0.035] backdrop-blur-[3px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.22 }}
             />
+          ) : null}
+        </AnimatePresence>
 
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0.20)_42%,rgba(255,255,255,0.16)_100%)]"
+        <motion.aside
+          id="mobile-navigation"
+          aria-label="Navigation mobile"
+          animate={{ y: menuOpen ? "0%" : "calc(100% - 44px)" }}
+          transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
+          className={[
+            "fixed inset-x-3 bottom-0 z-[130] h-[min(88svh,760px)] overflow-hidden",
+            "rounded-t-[30px] border-x border-t border-white/30",
+            "bg-white/[0.28] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
+            "shadow-[0_-18px_60px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.46)]",
+            "will-change-transform"
+          ].join(" ")}
+        >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0.12)_48%,rgba(255,255,255,0.18)_100%)]"
+          />
+
+          <button
+            type="button"
+            aria-label={menuOpen ? "Réduire le menu" : "Ouvrir le menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="relative z-20 flex h-11 w-full items-center justify-center"
+          >
+            <motion.span
+              animate={{ width: menuOpen ? 58 : 42, opacity: menuOpen ? 0.5 : 0.34 }}
+              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+              className="block h-px bg-black"
             />
+          </button>
 
+          <div className="relative z-10 flex h-[calc(100%-44px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
             <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.98 }}
-              transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
-              className={[
-                "relative mx-4 mt-4 min-h-[calc(100svh-2rem)] overflow-hidden rounded-[32px]",
-                "border border-white/30 bg-white/[0.20] text-black",
-                "backdrop-blur-3xl backdrop-saturate-150",
-                "shadow-[0_20px_70px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.40)]",
-                "will-change-transform"
-              ].join(" ")}
+              initial={false}
+              animate={menuOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
+              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
             >
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0.12)_36%,rgba(255,255,255,0.08)_100%)]"
-              />
-
-              <div className="relative z-10 flex min-h-[calc(100svh-2rem)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5">
-                <motion.div
-                  initial={{ opacity: 0, x: 18 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-                  className="flex h-14 items-center"
-                >
-                  <Link
-                    href="/"
-                    aria-label="VK — Accueil"
-                    onClick={closeMobileMenu}
-                    className="text-[1.9rem] font-bold tracking-[-0.06em]"
-                  >
-                    VK
-                  </Link>
-                </motion.div>
-
-                <nav aria-label="Navigation mobile" className="flex flex-1 flex-col justify-center py-8">
-                  <motion.div
-                    className="space-y-1"
-                    variants={mobileListVariants}
-                    initial="closed"
-                    animate="open"
-                    exit="closed"
-                  >
-                    {navigation.map((item, index) => {
-                      const active = pathname.startsWith(item.href);
-
-                      return (
-                        <motion.div
-                          key={item.href}
-                          variants={mobileItemVariants}
-                          transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-                          className="will-change-transform"
-                        >
-                          <motion.div
-                            whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
-                            transition={itemSpring}
-                          >
-                            <Link
-                              href={item.href}
-                              onClick={closeMobileMenu}
-                              aria-current={active ? "page" : undefined}
-                              className={[
-                                "flex items-center justify-between rounded-[24px] px-3 py-5",
-                                active ? "bg-white/[0.18]" : ""
-                              ].join(" ")}
-                            >
-                              <span className="text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]">
-                                {item.label}
-                              </span>
-                              <motion.span
-                                animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }}
-                                transition={itemSpring}
-                                className="text-[11px] font-semibold tracking-[0.18em]"
-                              >
-                                {String(index + 1).padStart(2, "0")}
-                              </motion.span>
-                            </Link>
-                          </motion.div>
-                        </motion.div>
-                      );
-                    })}
-                  </motion.div>
-                </nav>
-              </div>
+              <Link
+                href="/"
+                aria-label="VK — Accueil"
+                onClick={closeMobileMenu}
+                className="inline-block text-[1.9rem] font-bold tracking-[-0.07em]"
+              >
+                VK
+              </Link>
             </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+
+            <nav className="flex flex-1 flex-col justify-center py-6">
+              <motion.div
+                className="space-y-1"
+                variants={mobileListVariants}
+                initial={false}
+                animate={menuOpen ? "open" : "closed"}
+              >
+                {navigation.map((item, index) => {
+                  const active = pathname.startsWith(item.href);
+
+                  return (
+                    <motion.div
+                      key={item.href}
+                      variants={mobileItemVariants}
+                      transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                      className="border-b border-black/[0.075] first:border-t will-change-transform"
+                    >
+                      <motion.div
+                        whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
+                        transition={itemSpring}
+                      >
+                        <Link
+                          href={item.href}
+                          onClick={closeMobileMenu}
+                          aria-current={active ? "page" : undefined}
+                          className="grid grid-cols-[1fr_auto] items-center gap-5 py-5"
+                        >
+                          <span
+                            className={[
+                              "text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]",
+                              active ? "opacity-100" : "opacity-72"
+                            ].join(" ")}
+                          >
+                            {item.label}
+                          </span>
+
+                          <motion.span
+                            animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }}
+                            transition={itemSpring}
+                            className="text-[11px] font-semibold tracking-[0.18em]"
+                          >
+                            {String(index + 1).padStart(2, "0")}
+                          </motion.span>
+                        </Link>
+                      </motion.div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </nav>
+          </div>
+        </motion.aside>
+      </div>
     </>
   );
 }
