@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { isAdmin } from "@/lib/auth";
 import { getMaintenanceSettings } from "@/lib/repository";
 
 export const dynamic = "force-dynamic";
@@ -10,9 +11,12 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const maintenance = await getMaintenanceSettings();
+  const [maintenance, admin] = await Promise.all([
+    getMaintenanceSettings(),
+    isAdmin()
+  ]);
 
-  if (maintenance?.enabled) {
+  if (maintenance?.enabled && !admin) {
     redirect("/maintenance");
   }
 
