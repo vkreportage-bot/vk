@@ -115,7 +115,7 @@ export function SiteHeader() {
           "transition-all duration-300",
           menuOpen
             ? "border border-transparent bg-transparent shadow-none backdrop-blur-none backdrop-saturate-100"
-            : "border border-white/35 bg-white/[0.22] backdrop-blur-3xl backdrop-saturate-150 shadow-[0_10px_30px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.45)]"
+            : "border border-white/35 bg-transparent shadow-[0_10px_30px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.45)]"
         ].join(" ")}
       >
         <span className="relative block h-5 w-5">
