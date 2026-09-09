@@ -323,7 +323,7 @@ export function SiteHeader() {
         </motion.aside>
       </div>
 
-      {/* Mobile : drawer bas -> haut, sans burger */}
+      {/* Mobile : drawer bas -> haut, plein écran en largeur */}
       <div className="md:hidden">
         <AnimatePresence>
           {menuOpen ? (
@@ -346,8 +346,8 @@ export function SiteHeader() {
           animate={{ y: menuOpen ? "0%" : "calc(100% - 44px)" }}
           transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
           className={[
-            "fixed inset-x-3 bottom-0 z-[130] h-[min(88svh,760px)] overflow-hidden",
-            "rounded-t-[30px] border-x border-t border-white/30",
+            "fixed inset-x-0 bottom-0 z-[130] h-[min(88svh,760px)] overflow-hidden",
+            "rounded-t-[26px] border-t border-white/30",
             "bg-white/[0.28] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
             "shadow-[0_-18px_60px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.46)]",
             "will-change-transform"
