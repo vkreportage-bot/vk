@@ -363,12 +363,17 @@ export function SiteHeader() {
             aria-label={menuOpen ? "Réduire le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-20 flex h-11 w-full items-center justify-center"
+            className="relative z-20 flex h-11 w-full flex-col items-center justify-center gap-[5px]"
           >
             <motion.span
-              animate={{ width: menuOpen ? 58 : 42, opacity: menuOpen ? 0.5 : 0.34 }}
+              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.85 : 0.7 }}
               transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-              className="block h-px bg-black"
+              className="block h-px bg-orange-600"
+            />
+            <motion.span
+              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.85 : 0.7 }}
+              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+              className="block h-px bg-orange-600"
             />
           </button>
 
