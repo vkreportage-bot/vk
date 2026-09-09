@@ -347,36 +347,50 @@ export function SiteHeader() {
           transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
           className={[
             "fixed inset-x-0 bottom-0 z-[130] h-[100svh] overflow-hidden",
-            "bg-white/[0.28] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
-            "shadow-[0_-18px_60px_rgba(0,0,0,0.12)]",
+            "bg-white/[0.20] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
+            "shadow-[0_-18px_60px_rgba(0,0,0,0.10)]",
             "will-change-transform"
           ].join(" ")}
         >
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.34)_0%,rgba(255,255,255,0.12)_48%,rgba(255,255,255,0.18)_100%)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.25)_0%,rgba(255,255,255,0.07)_48%,rgba(255,255,255,0.11)_100%)]"
           />
 
           <button
             type="button"
-            aria-label={menuOpen ? "Réduire le menu" : "Ouvrir le menu"}
+            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-20 flex h-11 w-full flex-col items-center justify-center gap-[9px]"
+            className="relative z-20 flex h-14 w-full items-center justify-center"
           >
-            <motion.span
-              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.88 : 0.72 }}
-              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-              className="block h-[2px] bg-black"
-            />
-            <motion.span
-              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.88 : 0.72 }}
-              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-              className="block h-[2px] bg-black"
-            />
+            <AnimatePresence mode="wait" initial={false}>
+              {menuOpen ? (
+                <motion.span
+                  key="close"
+                  initial={{ opacity: 0, scale: 0.72, rotate: -18 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.72, rotate: 18 }}
+                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                  className="absolute right-6 top-1/2 block h-7 w-7 -translate-y-1/2"
+                >
+                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-black" />
+                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-black" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="handle"
+                  initial={{ opacity: 0, scaleX: 0.72 }}
+                  animate={{ opacity: 0.78, scaleX: 1 }}
+                  exit={{ opacity: 0, scaleX: 0.72 }}
+                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                  className="block h-[2px] w-[38px] bg-black"
+                />
+              )}
+            </AnimatePresence>
           </button>
 
-          <div className="relative z-10 flex h-[calc(100%-44px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
+          <div className="relative z-10 flex h-[calc(100%-56px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
             <motion.div
               initial={false}
               animate={menuOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
