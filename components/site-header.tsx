@@ -152,6 +152,10 @@ export function SiteHeader() {
     };
   }, []);
 
+  function openMobileMenu() {
+    setMenuOpen(true);
+  }
+
   function closeMobileMenu() {
     setMenuOpen(false);
   }
@@ -323,141 +327,176 @@ export function SiteHeader() {
         </motion.aside>
       </div>
 
-      {/* Mobile : drawer bas -> haut, plein écran en largeur et hauteur */}
+      {/* Mobile : trigger indépendant + drawer dynamique */}
       <div className="md:hidden">
-        <AnimatePresence>
-          {menuOpen ? (
+        <AnimatePresence initial={false}>
+          {!menuOpen ? (
             <motion.button
+              key="mobile-trigger"
               type="button"
-              aria-label="Fermer le menu"
-              onClick={closeMobileMenu}
-              className="fixed inset-0 z-[118] bg-black/[0.035] backdrop-blur-[3px]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.22 }}
-            />
+              aria-label="Ouvrir le menu"
+              aria-expanded="false"
+              aria-controls="mobile-navigation"
+              onPointerDown={(event) => {
+                if (event.pointerType !== "mouse") {
+                  event.preventDefault();
+                  openMobileMenu();
+                }
+              }}
+              onClick={openMobileMenu}
+              initial={{ y: 44, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 18, opacity: 0 }}
+              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+              className={[
+                "fixed inset-x-0 bottom-0 z-[130] flex h-11 touch-manipulation items-center justify-center",
+                "bg-white/[0.14] backdrop-blur-[30px] backdrop-saturate-[1.45]",
+                "shadow-[0_-12px_40px_rgba(0,0,0,0.08)]"
+              ].join(" ")}
+            >
+              <span className="block h-[2px] w-[38px] bg-black opacity-60" />
+            </motion.button>
           ) : null}
         </AnimatePresence>
 
-        <motion.aside
-          id="mobile-navigation"
-          aria-label="Navigation mobile"
-          animate={{ y: menuOpen ? "0%" : "calc(100% - 44px)" }}
-          transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
-          className={[
-            "fixed inset-x-0 bottom-0 z-[130] h-[100svh] overflow-hidden",
-            "bg-white/[0.20] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
-            "shadow-[0_-18px_60px_rgba(0,0,0,0.10)]",
-            "will-change-transform"
-          ].join(" ")}
-        >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.25)_0%,rgba(255,255,255,0.07)_48%,rgba(255,255,255,0.11)_100%)]"
-          />
-
-          <button
-            type="button"
-            aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-20 flex h-11 w-full items-center justify-center"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {menuOpen ? (
-                <motion.span
-                  key="close"
-                  initial={{ opacity: 0, scale: 0.72, rotate: -18 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.72, rotate: 18 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-                  className="absolute right-6 top-1/2 block h-7 w-7 -translate-y-1/2"
-                >
-                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-black" />
-                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-black" />
-                </motion.span>
-              ) : (
-                <motion.span
-                  key="handle"
-                  initial={{ opacity: 0, scaleX: 0.72 }}
-                  animate={{ opacity: 0.6, scaleX: 1 }}
-                  exit={{ opacity: 0, scaleX: 0.72 }}
-                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-                  className="block h-[2px] w-[38px] bg-black"
-                />
-              )}
-            </AnimatePresence>
-          </button>
-
-          <div className="relative z-10 flex h-[calc(100%-44px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
-            <motion.div
-              initial={false}
-              animate={menuOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
-              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-            >
-              <Link
-                href="/"
-                aria-label="VK — Accueil"
+        <AnimatePresence initial={false}>
+          {menuOpen ? (
+            <>
+              <motion.button
+                key="mobile-overlay"
+                type="button"
+                aria-label="Fermer le menu"
+                onPointerDown={(event) => {
+                  if (event.pointerType !== "mouse") {
+                    event.preventDefault();
+                    closeMobileMenu();
+                  }
+                }}
                 onClick={closeMobileMenu}
-                className="inline-block text-[1.9rem] font-bold tracking-[-0.07em]"
-              >
-                VK
-              </Link>
-            </motion.div>
+                className="fixed inset-0 z-[118] touch-manipulation bg-black/[0.035] backdrop-blur-[3px]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.22 }}
+              />
 
-            <nav className="flex flex-1 flex-col justify-center py-6">
-              <motion.div
-                className="space-y-1"
-                variants={mobileListVariants}
-                initial={false}
-                animate={menuOpen ? "open" : "closed"}
+              <motion.aside
+                key="mobile-drawer"
+                id="mobile-navigation"
+                aria-label="Navigation mobile"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
+                className={[
+                  "fixed inset-0 z-[130] h-[100dvh] min-h-[100dvh] overflow-hidden overscroll-none",
+                  "bg-white/[0.18] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
+                  "shadow-[0_-18px_60px_rgba(0,0,0,0.10)]",
+                  "will-change-transform"
+                ].join(" ")}
               >
-                {navigation.map((item, index) => {
-                  const active = pathname.startsWith(item.href);
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.22)_0%,rgba(255,255,255,0.06)_48%,rgba(255,255,255,0.10)_100%)]"
+                />
 
-                  return (
-                    <motion.div
-                      key={item.href}
-                      variants={mobileItemVariants}
-                      transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-                      className="border-b border-black/[0.075] first:border-t will-change-transform"
+                <button
+                  type="button"
+                  aria-label="Fermer le menu"
+                  onPointerDown={(event) => {
+                    if (event.pointerType !== "mouse") {
+                      event.preventDefault();
+                      closeMobileMenu();
+                    }
+                  }}
+                  onClick={closeMobileMenu}
+                  className="absolute right-5 top-[max(1rem,env(safe-area-inset-top))] z-30 flex h-11 w-11 touch-manipulation items-center justify-center"
+                >
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.72, rotate: -18 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    exit={{ opacity: 0, scale: 0.72, rotate: 18 }}
+                    transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                    className="relative block h-7 w-7"
+                  >
+                    <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-black" />
+                    <span className="absolute left-1/2 top-1/2 block h-[2px] w-7 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-black" />
+                  </motion.span>
+                </button>
+
+                <div className="relative z-10 flex h-full flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))]">
+                  <motion.div
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 12 }}
+                    transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                  >
+                    <Link
+                      href="/"
+                      aria-label="VK — Accueil"
+                      onClick={closeMobileMenu}
+                      className="inline-block text-[1.9rem] font-bold tracking-[-0.07em]"
                     >
-                      <motion.div
-                        whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
-                        transition={itemSpring}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={closeMobileMenu}
-                          aria-current={active ? "page" : undefined}
-                          className="grid grid-cols-[1fr_auto] items-center gap-5 py-5"
-                        >
-                          <span
-                            className={[
-                              "text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]",
-                              active ? "opacity-100" : "opacity-72"
-                            ].join(" ")}
-                          >
-                            {item.label}
-                          </span>
+                      VK
+                    </Link>
+                  </motion.div>
 
-                          <motion.span
-                            animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }}
-                            transition={itemSpring}
-                            className="text-[11px] font-semibold tracking-[0.18em]"
+                  <nav className="flex flex-1 flex-col justify-center py-6">
+                    <motion.div
+                      className="space-y-1"
+                      variants={mobileListVariants}
+                      initial="closed"
+                      animate="open"
+                      exit="closed"
+                    >
+                      {navigation.map((item, index) => {
+                        const active = pathname.startsWith(item.href);
+
+                        return (
+                          <motion.div
+                            key={item.href}
+                            variants={mobileItemVariants}
+                            transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                            className="border-b border-black/[0.075] first:border-t will-change-transform"
                           >
-                            {String(index + 1).padStart(2, "0")}
-                          </motion.span>
-                        </Link>
-                      </motion.div>
+                            <motion.div
+                              whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
+                              transition={itemSpring}
+                            >
+                              <Link
+                                href={item.href}
+                                onClick={closeMobileMenu}
+                                aria-current={active ? "page" : undefined}
+                                className="grid grid-cols-[1fr_auto] items-center gap-5 py-5"
+                              >
+                                <span
+                                  className={[
+                                    "text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]",
+                                    active ? "opacity-100" : "opacity-72"
+                                  ].join(" ")}
+                                >
+                                  {item.label}
+                                </span>
+
+                                <motion.span
+                                  animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }}
+                                  transition={itemSpring}
+                                  className="text-[11px] font-semibold tracking-[0.18em]"
+                                >
+                                  {String(index + 1).padStart(2, "0")}
+                                </motion.span>
+                              </Link>
+                            </motion.div>
+                          </motion.div>
+                        );
+                      })}
                     </motion.div>
-                  );
-                })}
-              </motion.div>
-            </nav>
-          </div>
-        </motion.aside>
+                  </nav>
+                </div>
+              </motion.aside>
+            </>
+          ) : null}
+        </AnimatePresence>
       </div>
     </>
   );
