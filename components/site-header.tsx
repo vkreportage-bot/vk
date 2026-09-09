@@ -362,7 +362,7 @@ export function SiteHeader() {
             aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-20 flex h-14 w-full items-center justify-center"
+            className="relative z-20 flex h-11 w-full items-center justify-center"
           >
             <AnimatePresence mode="wait" initial={false}>
               {menuOpen ? (
@@ -381,7 +381,7 @@ export function SiteHeader() {
                 <motion.span
                   key="handle"
                   initial={{ opacity: 0, scaleX: 0.72 }}
-                  animate={{ opacity: 0.78, scaleX: 1 }}
+                  animate={{ opacity: 0.6, scaleX: 1 }}
                   exit={{ opacity: 0, scaleX: 0.72 }}
                   transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
                   className="block h-[2px] w-[38px] bg-black"
@@ -390,7 +390,7 @@ export function SiteHeader() {
             </AnimatePresence>
           </button>
 
-          <div className="relative z-10 flex h-[calc(100%-56px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
+          <div className="relative z-10 flex h-[calc(100%-44px)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
             <motion.div
               initial={false}
               animate={menuOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 }}
