@@ -19,6 +19,10 @@ export function ProjectCard({
     .map((category) => category.name)
     .join(" · ");
 
+  const isUnsplash =
+    project.coverUrl.includes("images.unsplash.com") ||
+    project.coverUrl.includes("plus.unsplash.com");
+
   return (
     <article className="group">
       <Link
@@ -31,6 +35,7 @@ export function ProjectCard({
             src={project.coverUrl}
             alt={project.title}
             fill
+            unoptimized={isUnsplash}
             sizes="
               (min-width: 1280px) 25vw,
               (min-width: 1024px) 33vw,
@@ -167,7 +172,6 @@ export function ProjectCard({
                 text-[13px]
                 leading-5
                 text-black/45
-                
               "
             >
               {project.excerpt}
