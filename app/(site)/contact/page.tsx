@@ -68,7 +68,7 @@ export default async function ContactPage({
       </header>
 
       <div className="mt-14 grid gap-12  pt-14  md:grid-cols-12 md:gap-8">
-        <aside className="md:col-span-3">
+        {/* <aside className="md:col-span-3">
           <p className="text-xs uppercase tracking-[0.16em] text-black/40">
             Contact direct
           </p>
@@ -78,7 +78,7 @@ export default async function ContactPage({
           >
             {siteConfig.email}
           </a>
-        </aside>
+        </aside> */}
 
         <section className="md:col-span-7 md:col-start-5">
           {sent ? (
