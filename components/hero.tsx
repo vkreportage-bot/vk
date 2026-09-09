@@ -38,6 +38,24 @@ export function Hero({ hero }: { hero?: HeroSettings | null }) {
                 : ""
             }`}
           />
+
+          {/* Profondeur cinématographique : halos flous très légers. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-[18%] top-[4%] h-[48vw] max-h-[620px] min-h-[260px] w-[48vw] max-w-[620px] min-w-[260px] rounded-full bg-white/[0.055] blur-[80px] md:blur-[120px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-[18%] -right-[12%] h-[52vw] max-h-[720px] min-h-[300px] w-[52vw] max-w-[720px] min-w-[300px] rounded-full bg-black/30 blur-[90px] md:blur-[140px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-black/10 backdrop-blur-[1px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 shadow-[inset_0_0_160px_rgba(0,0,0,0.18)] md:shadow-[inset_0_0_220px_rgba(0,0,0,0.16)]"
+          />
         </>
       ) : null}
 
