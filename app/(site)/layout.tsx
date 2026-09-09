@@ -1,11 +1,21 @@
-import { SiteHeader } from "@/components/site-header";
+import { redirect } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
+import { getMaintenanceSettings } from "@/lib/repository";
 
-export default function SiteLayout({
-  children,
+export const dynamic = "force-dynamic";
+
+export default async function SiteLayout({
+  children
 }: {
   children: React.ReactNode;
 }) {
+  const maintenance = await getMaintenanceSettings();
+
+  if (maintenance?.enabled) {
+    redirect("/maintenance");
+  }
+
   return (
     <>
       <SiteHeader />

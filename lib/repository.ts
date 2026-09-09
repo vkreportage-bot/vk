@@ -1,6 +1,12 @@
 import { demoArticles, demoCategories, demoProjects } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
-import type { Article, Category, HeroSettings, Project } from "@/types";
+import type {
+  Article,
+  Category,
+  HeroSettings,
+  MaintenanceSettings,
+  Project
+} from "@/types";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL);
 
@@ -97,6 +103,19 @@ export async function getHeroSettings(): Promise<HeroSettings | null> {
     return (await prisma.heroSettings.findUnique({
       where: { id: "home" }
     })) as HeroSettings | null;
+  } catch (error) {
+    if (isMissingTable(error)) return null;
+    throw error;
+  }
+}
+
+export async function getMaintenanceSettings(): Promise<MaintenanceSettings | null> {
+  if (!hasDatabase) return null;
+
+  try {
+    return (await prisma.maintenanceSettings.findUnique({
+      where: { id: "site" }
+    })) as MaintenanceSettings | null;
   } catch (error) {
     if (isMissingTable(error)) return null;
     throw error;

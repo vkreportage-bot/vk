@@ -17,6 +17,13 @@ export type HeroSettings = {
   updatedAt: Date;
 };
 
+export type MaintenanceSettings = {
+  id: string;
+  enabled: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type Category = {
   id: string;
   name: string;
