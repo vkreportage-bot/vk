@@ -32,6 +32,23 @@ const nextConfig: NextConfig = {
 
   poweredByHeader: false,
 
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.vk-one.fr" }],
+        destination: "https://vk-one.fr/:path*",
+        permanent: true
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "vk-ochre-phi.vercel.app" }],
+        destination: "https://vk-one.fr/:path*",
+        permanent: true
+      }
+    ];
+  },
+
   async headers() {
     return [
       {
