@@ -14,9 +14,72 @@ const navigation = [
 
 const drawerSpring = {
   type: "spring" as const,
-  stiffness: 260,
-  damping: 28,
-  mass: 0.92
+  stiffness: 185,
+  damping: 20,
+  mass: 0.95
+};
+
+const itemSpring = {
+  type: "spring" as const,
+  stiffness: 165,
+  damping: 15,
+  mass: 0.88
+};
+
+const desktopListVariants = {
+  closed: {
+    transition: {
+      staggerChildren: 0.025,
+      staggerDirection: -1
+    }
+  },
+  open: {
+    transition: {
+      delayChildren: 0.055,
+      staggerChildren: 0.075
+    }
+  }
+};
+
+const desktopItemVariants = {
+  closed: {
+    x: 52,
+    scale: 0.94,
+    opacity: 0
+  },
+  open: {
+    x: 0,
+    scale: 1,
+    opacity: 1
+  }
+};
+
+const mobileListVariants = {
+  closed: {
+    transition: {
+      staggerChildren: 0.025,
+      staggerDirection: -1
+    }
+  },
+  open: {
+    transition: {
+      delayChildren: 0.06,
+      staggerChildren: 0.065
+    }
+  }
+};
+
+const mobileItemVariants = {
+  closed: {
+    y: 34,
+    scale: 0.94,
+    opacity: 0
+  },
+  open: {
+    y: 0,
+    scale: 1,
+    opacity: 1
+  }
 };
 
 export function SiteHeader() {
@@ -138,7 +201,7 @@ export function SiteHeader() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.28 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.24 }}
             />
           ) : null}
         </AnimatePresence>
@@ -153,7 +216,8 @@ export function SiteHeader() {
             "fixed bottom-4 right-0 top-4 z-[100] w-[360px] xl:w-[400px]",
             "overflow-hidden rounded-l-[32px] border-y border-l border-white/30",
             "bg-white/[0.30] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
-            "shadow-[-24px_0_70px_rgba(0,0,0,0.10),inset_1px_0_0_rgba(255,255,255,0.46)]"
+            "shadow-[-24px_0_70px_rgba(0,0,0,0.10),inset_1px_0_0_rgba(255,255,255,0.46)]",
+            "will-change-transform"
           ].join(" ")}
         >
           <div
@@ -169,7 +233,7 @@ export function SiteHeader() {
           {/* Rail visible quand le drawer est fermé / en approche */}
           <button
             type="button"
-            aria-label={drawerOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-label={drawerOpen ? "Réduire le menu" : "Ouvrir le menu"}
             aria-expanded={drawerOpen}
             onClick={() => {
               setDrawerPeek(true);
@@ -179,7 +243,7 @@ export function SiteHeader() {
           >
             <motion.div
               animate={{ opacity: drawerOpen ? 0 : 1 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.18 }}
               className="flex flex-col items-center gap-5"
             >
               <span className="block h-px w-8 bg-black/70" />
@@ -190,88 +254,72 @@ export function SiteHeader() {
             </motion.div>
           </button>
 
-          <div className="relative z-10 flex h-full flex-col pl-[86px] pr-8 py-9">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-black/35">
-                  Navigation
-                </p>
-                <p className="mt-2 text-sm tracking-[-0.02em] text-black/55">
-                  VK / Vidéaste
-                </p>
-              </div>
-
-              <motion.button
-                type="button"
-                aria-label="Fermer le menu"
+          <div className="relative z-10 flex h-full flex-col py-9 pl-[86px] pr-8">
+            <motion.div
+              initial={false}
+              animate={drawerOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
+              transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+            >
+              <Link
+                href="/"
+                aria-label="VK — Accueil"
                 onClick={closeDesktopDrawer}
-                whileHover={{ rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                transition={drawerSpring}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-black/[0.08] bg-white/[0.18]"
+                className="inline-block text-[1.9rem] font-bold tracking-[-0.07em]"
               >
-                <span className="relative block h-4 w-4">
-                  <span className="absolute left-0 top-1/2 h-px w-4 -translate-y-1/2 rotate-45 bg-black" />
-                  <span className="absolute left-0 top-1/2 h-px w-4 -translate-y-1/2 -rotate-45 bg-black" />
-                </span>
-              </motion.button>
-            </div>
+                VK
+              </Link>
+            </motion.div>
 
             <nav className="flex flex-1 flex-col justify-center" aria-label="Menu desktop">
-              <div>
+              <motion.div
+                variants={desktopListVariants}
+                initial={false}
+                animate={drawerOpen ? "open" : "closed"}
+              >
                 {navigation.map((item, index) => {
                   const active = pathname.startsWith(item.href);
 
                   return (
                     <motion.div
                       key={item.href}
-                      initial={false}
-                      animate={
-                        drawerOpen
-                          ? { opacity: 1, x: 0 }
-                          : { opacity: 0.58, x: 16 }
-                      }
-                      transition={{
-                        ...drawerSpring,
-                        delay: drawerOpen && !shouldReduceMotion ? index * 0.035 : 0
-                      }}
-                      className="border-b border-black/[0.075] first:border-t"
+                      variants={desktopItemVariants}
+                      transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                      className="border-b border-black/[0.075] first:border-t will-change-transform"
                     >
-                      <Link
-                        href={item.href}
-                        aria-current={active ? "page" : undefined}
-                        onClick={closeDesktopDrawer}
-                        className="group grid grid-cols-[1fr_auto] items-center gap-5 py-5"
+                      <motion.div
+                        whileHover={shouldReduceMotion ? undefined : { x: 10, scale: 1.015 }}
+                        whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
+                        transition={itemSpring}
                       >
-                        <span
-                          className={[
-                            "text-[clamp(2rem,3vw,3.15rem)] leading-[0.95] tracking-[-0.06em] transition-[transform,opacity] duration-300",
-                            "group-hover:translate-x-2",
-                            active ? "opacity-100" : "opacity-72 group-hover:opacity-100"
-                          ].join(" ")}
+                        <Link
+                          href={item.href}
+                          aria-current={active ? "page" : undefined}
+                          onClick={closeDesktopDrawer}
+                          className="grid grid-cols-[1fr_auto] items-center gap-5 py-5"
                         >
-                          {item.label}
-                        </span>
+                          <span
+                            className={[
+                              "text-[clamp(2rem,3vw,3.15rem)] leading-[0.95] tracking-[-0.06em]",
+                              active ? "opacity-100" : "opacity-72"
+                            ].join(" ")}
+                          >
+                            {item.label}
+                          </span>
 
-                        <span
-                          className={[
-                            "text-[9px] font-semibold tracking-[0.18em]",
-                            active ? "text-black" : "text-black/28"
-                          ].join(" ")}
-                        >
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                      </Link>
+                          <motion.span
+                            animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.28 }}
+                            transition={itemSpring}
+                            className="text-[9px] font-semibold tracking-[0.18em]"
+                          >
+                            {String(index + 1).padStart(2, "0")}
+                          </motion.span>
+                        </Link>
+                      </motion.div>
                     </motion.div>
                   );
                 })}
-              </div>
+              </motion.div>
             </nav>
-
-            <div className="flex items-end justify-between border-t border-black/[0.08] pt-5 text-[9px] uppercase tracking-[0.16em] text-black/38">
-              <span>Films</span>
-              <span>Histoires humaines</span>
-            </div>
           </div>
         </motion.aside>
       </div>
@@ -315,7 +363,7 @@ export function SiteHeader() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.26, ease: "easeOut" }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.24, ease: "easeOut" }}
           >
             <motion.div
               className="absolute inset-0 bg-white/[0.24] backdrop-blur-[26px] backdrop-saturate-150"
@@ -330,15 +378,16 @@ export function SiteHeader() {
             />
 
             <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.985, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -8, scale: 0.985, filter: "blur(8px)" }}
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.98 }}
               transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
               className={[
                 "relative mx-4 mt-4 min-h-[calc(100svh-2rem)] overflow-hidden rounded-[32px]",
                 "border border-white/30 bg-white/[0.20] text-black",
                 "backdrop-blur-3xl backdrop-saturate-150",
-                "shadow-[0_20px_70px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.40)]"
+                "shadow-[0_20px_70px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.40)]",
+                "will-change-transform"
               ].join(" ")}
             >
               <div
@@ -348,9 +397,9 @@ export function SiteHeader() {
 
               <div className="relative z-10 flex min-h-[calc(100svh-2rem)] flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5">
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: shouldReduceMotion ? 0 : 0.06, duration: 0.35 }}
+                  initial={{ opacity: 0, x: 18 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
                   className="flex h-14 items-center"
                 >
                   <Link
@@ -364,54 +413,53 @@ export function SiteHeader() {
                 </motion.div>
 
                 <nav aria-label="Navigation mobile" className="flex flex-1 flex-col justify-center py-8">
-                  <div className="space-y-1">
+                  <motion.div
+                    className="space-y-1"
+                    variants={mobileListVariants}
+                    initial="closed"
+                    animate="open"
+                    exit="closed"
+                  >
                     {navigation.map((item, index) => {
                       const active = pathname.startsWith(item.href);
 
                       return (
                         <motion.div
                           key={item.href}
-                          initial={{ opacity: 0, y: 24, scale: 0.98 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{
-                            ...drawerSpring,
-                            delay: shouldReduceMotion ? 0 : 0.06 + index * 0.05
-                          }}
+                          variants={mobileItemVariants}
+                          transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
+                          className="will-change-transform"
                         >
-                          <Link
-                            href={item.href}
-                            onClick={closeMobileMenu}
-                            aria-current={active ? "page" : undefined}
-                            className={[
-                              "flex items-center justify-between rounded-[24px] px-3 py-5",
-                              "transition-colors duration-300",
-                              active ? "bg-white/[0.18]" : "hover:bg-white/[0.12]"
-                            ].join(" ")}
+                          <motion.div
+                            whileTap={shouldReduceMotion ? undefined : { scale: 0.975 }}
+                            transition={itemSpring}
                           >
-                            <span className="text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]">
-                              {item.label}
-                            </span>
-                            <span className="text-[11px] font-semibold tracking-[0.18em] text-black/30">
-                              {String(index + 1).padStart(2, "0")}
-                            </span>
-                          </Link>
+                            <Link
+                              href={item.href}
+                              onClick={closeMobileMenu}
+                              aria-current={active ? "page" : undefined}
+                              className={[
+                                "flex items-center justify-between rounded-[24px] px-3 py-5",
+                                active ? "bg-white/[0.18]" : ""
+                              ].join(" ")}
+                            >
+                              <span className="text-[clamp(2.8rem,12vw,4.8rem)] leading-[0.94] tracking-[-0.065em]">
+                                {item.label}
+                              </span>
+                              <motion.span
+                                animate={active ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.3 }}
+                                transition={itemSpring}
+                                className="text-[11px] font-semibold tracking-[0.18em]"
+                              >
+                                {String(index + 1).padStart(2, "0")}
+                              </motion.span>
+                            </Link>
+                          </motion.div>
                         </motion.div>
                       );
                     })}
-                  </div>
+                  </motion.div>
                 </nav>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ delay: shouldReduceMotion ? 0 : 0.22, duration: 0.35 }}
-                  className="flex items-end justify-between gap-4 border-t border-black/[0.08] pt-5 text-[10px] uppercase tracking-[0.14em] text-black/50"
-                >
-                  <span>VK / Vidéaste</span>
-                  <span className="text-right">Films & histoires humaines</span>
-                </motion.div>
               </div>
             </motion.div>
           </motion.div>
