@@ -1,14 +1,18 @@
 import { redirect } from "next/navigation";
 import { HeroForm } from "@/components/admin/hero-form";
+import { MaintenanceToggle } from "@/components/admin/maintenance-toggle";
 import { isAdmin } from "@/lib/auth";
-import { getHeroSettings } from "@/lib/repository";
+import { getHeroSettings, getMaintenanceSettings } from "@/lib/repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHeroPage() {
   if (!(await isAdmin())) redirect("/admin/login");
 
-  const hero = await getHeroSettings();
+  const [hero, maintenance] = await Promise.all([
+    getHeroSettings(),
+    getMaintenanceSettings()
+  ]);
 
   return (
     <div className="mx-auto w-full min-w-0 max-w-6xl overflow-x-clip">
@@ -24,6 +28,7 @@ export default async function AdminHeroPage() {
         </p>
       </header>
 
+      <MaintenanceToggle initialEnabled={maintenance?.enabled ?? false} />
       <HeroForm initialHero={hero} />
     </div>
   );
