@@ -350,20 +350,20 @@ export function HeroForm({
   );
 
   return (
-    <div className="grid gap-8 py-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-      <section>
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <div>
+    <div className="grid w-full min-w-0 gap-6 py-6 sm:gap-8 sm:py-8 xl:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+      <section className="min-w-0">
+        <div className="mb-4 flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+          <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-black/35">
               Aperçu
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.035em]">
+            <h2 className="mt-2 max-w-full text-xl font-semibold tracking-[-0.035em] sm:text-2xl">
               Hero de la page d’accueil
             </h2>
           </div>
 
           {hasMedia ? (
-            <span className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-black/50">
+            <span className="shrink-0 self-start rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-black/50 sm:self-auto">
               {isYoutubeMedia
                 ? "YouTube"
                 : mediaType === "VIDEO"
@@ -373,7 +373,7 @@ export function HeroForm({
           ) : null}
         </div>
 
-        <div className="relative aspect-[16/10] min-h-[420px] overflow-hidden rounded-2xl bg-[#e9e7e1] text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)] ring-1 ring-black/10">
+        <div className="relative aspect-[4/5] w-full max-w-full overflow-hidden rounded-2xl bg-[#e9e7e1] text-[#111] shadow-[0_1px_0_rgba(0,0,0,0.06)] ring-1 ring-black/10 sm:aspect-[16/10] sm:min-h-[420px]">
           {hasMedia && mediaType && mediaUrl ? (
             <>
               <HeroMedia mediaType={mediaType} mediaUrl={mediaUrl} />
@@ -383,24 +383,24 @@ export function HeroForm({
           ) : null}
 
           <div
-            className={`absolute inset-0 flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-12 ${
+            className={`absolute inset-0 flex min-w-0 flex-col justify-center px-4 py-6 sm:px-8 sm:py-8 lg:px-12 ${
               hasMedia ? "text-white" : "text-[#111]"
             }`}
           >
             <p
-              className={`mb-5 text-[10px] font-semibold uppercase tracking-[0.2em] ${
+              className={`mb-4 text-[9px] font-semibold uppercase tracking-[0.18em] sm:mb-5 sm:text-[10px] sm:tracking-[0.2em] ${
                 hasMedia ? "text-white/65" : "text-black/40"
               }`}
             >
               VK / Vidéaste
             </p>
-            <h3 className="max-w-4xl text-[clamp(2.5rem,5vw,5rem)] leading-[0.9] tracking-[-0.065em]">
+            <h3 className="max-w-full text-[clamp(2rem,11vw,3.25rem)] leading-[0.92] tracking-[-0.055em] sm:max-w-4xl sm:text-[clamp(2.5rem,5vw,5rem)] sm:leading-[0.9] sm:tracking-[-0.065em]">
               Des histoires humaines,
               <br />
               mises en images.
             </h3>
             <p
-              className={`mt-8 max-w-md text-xs leading-5 sm:text-sm ${
+              className={`mt-5 max-w-md text-[11px] leading-5 sm:mt-8 sm:text-sm ${
                 hasMedia ? "text-white/75" : "text-black/45"
               }`}
             >
@@ -411,22 +411,22 @@ export function HeroForm({
         </div>
       </section>
 
-      <aside className="space-y-6">
-        <section className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
-          <div className="flex items-start gap-3">
+      <aside className="min-w-0 space-y-5 sm:space-y-6">
+        <section className="min-w-0 rounded-2xl border border-black/10 bg-white p-4 sm:p-6">
+          <div className="flex min-w-0 items-start gap-3">
             <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-black text-white">
               <Upload size={17} />
             </div>
-            <div>
+            <div className="min-w-0">
               <h2 className="text-base font-semibold">Média du hero</h2>
-              <p className="mt-1 text-xs leading-5 text-black/45">
+              <p className="mt-1 break-words text-xs leading-5 text-black/45">
                 Importez un fichier paysage ou portrait, ou utilisez une vidéo YouTube.
               </p>
             </div>
           </div>
 
           <label
-            className={`mt-5 flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-black/20 px-5 text-center transition hover:border-black/45 hover:bg-black/[0.025] ${
+            className={`mt-5 flex min-h-32 w-full min-w-0 cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-black/20 px-3 text-center transition hover:border-black/45 hover:bg-black/[0.025] sm:px-5 ${
               uploading ? "pointer-events-none opacity-60" : ""
             }`}
           >
@@ -435,10 +435,10 @@ export function HeroForm({
             ) : (
               <Upload size={22} />
             )}
-            <span className="mt-3 text-sm font-medium">
+            <span className="mt-3 max-w-full break-words text-sm font-medium">
               {uploading ? "Envoi en cours…" : "Choisir une image ou une vidéo"}
             </span>
-            <span className="mt-1 text-xs text-black/40">
+            <span className="mt-1 max-w-full break-words text-xs text-black/40">
               Paysage ou portrait · JPG, PNG, WebP, AVIF, MP4 ou WebM
             </span>
             <input
@@ -454,17 +454,17 @@ export function HeroForm({
             />
           </label>
 
-          <div className="my-5 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/30">
-            <span className="h-px flex-1 bg-black/10" />
+          <div className="my-5 flex min-w-0 items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/30">
+            <span className="h-px min-w-0 flex-1 bg-black/10" />
             ou
-            <span className="h-px flex-1 bg-black/10" />
+            <span className="h-px min-w-0 flex-1 bg-black/10" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label htmlFor="hero-youtube-url" className="text-sm font-medium">
               Vidéo YouTube
             </label>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex min-w-0 flex-col gap-2 sm:flex-row">
               <input
                 id="hero-youtube-url"
                 type="url"
@@ -477,32 +477,32 @@ export function HeroForm({
                   }
                 }}
                 placeholder="https://www.youtube.com/watch?v=..."
-                className="min-w-0 flex-1 rounded-xl border border-black/15 px-3 py-2.5 text-sm outline-none transition focus:border-black/40"
+                className="w-full min-w-0 rounded-xl border border-black/15 px-3 py-2.5 text-sm outline-none transition focus:border-black/40"
               />
               <button
                 type="button"
                 onClick={useYoutubeVideo}
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-black px-3 text-xs font-semibold text-white transition hover:bg-black/80"
+                className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-black px-4 text-xs font-semibold text-white transition hover:bg-black/80 sm:w-auto"
               >
                 <Youtube size={15} />
                 Utiliser
               </button>
             </div>
-            <p className="mt-2 text-xs leading-5 text-black/40">
+            <p className="mt-2 break-words text-xs leading-5 text-black/40">
               Liens youtube.com, youtu.be, Shorts et URLs d’intégration acceptés. Les Shorts utilisent automatiquement le cadrage portrait.
             </p>
           </div>
 
           {uploadInfo ? (
-            <div className="mt-4 rounded-xl bg-black/[0.035] p-4 text-xs text-black/55">
+            <div className="mt-4 min-w-0 rounded-xl bg-black/[0.035] p-4 text-xs text-black/55">
               <p className="truncate font-medium text-black/75">{uploadInfo.name}</p>
-              <p className="mt-1">
+              <p className="mt-1 break-words">
                 {uploadInfo.width} × {uploadInfo.height} px · {formatBytes(uploadInfo.size)}
                 {uploadInfo.duration !== undefined
                   ? ` · ${uploadInfo.duration.toFixed(1)} s`
                   : ""}
               </p>
-              <p className="mt-1 text-black/40">
+              <p className="mt-1 break-words text-black/40">
                 {uploadInfo.height > uploadInfo.width ? "Format portrait détecté" : "Format paysage détecté"}
               </p>
             </div>
@@ -512,58 +512,58 @@ export function HeroForm({
             <button
               type="button"
               onClick={removeMedia}
-              className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-black/10 text-sm font-medium text-black/55 transition hover:border-black/25 hover:text-black"
+              className="mt-4 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-black/10 px-3 text-sm font-medium text-black/55 transition hover:border-black/25 hover:text-black"
             >
               <Trash2 size={15} /> Retirer le média
             </button>
           ) : null}
         </section>
 
-        <section className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6">
+        <section className="min-w-0 rounded-2xl border border-black/10 bg-white p-4 sm:p-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-black/35">
             Conditions d’upload
           </p>
 
-          <div className="mt-4 space-y-4 text-xs leading-5 text-black/55">
-            <div className="flex gap-3">
+          <div className="mt-4 min-w-0 space-y-4 text-xs leading-5 text-black/55">
+            <div className="flex min-w-0 gap-3">
               <ImageIcon size={17} className="mt-0.5 shrink-0 text-black/70" />
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-black/80">Image</p>
-                <p>
+                <p className="break-words">
                   JPG, PNG, WebP ou AVIF · {Math.round(HERO_IMAGE_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_IMAGE_MIN_WIDTH} × {HERO_IMAGE_MIN_HEIGHT} px paysage ou {HERO_IMAGE_MIN_HEIGHT} × {HERO_IMAGE_MIN_WIDTH} px portrait minimum.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex min-w-0 gap-3">
               <Film size={17} className="mt-0.5 shrink-0 text-black/70" />
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-black/80">Vidéo</p>
-                <p>
+                <p className="break-words">
                   MP4 ou WebM · {Math.round(HERO_VIDEO_MAX_BYTES / 1024 / 1024)} Mo max · {HERO_VIDEO_MIN_WIDTH} × {HERO_VIDEO_MIN_HEIGHT} px paysage ou {HERO_VIDEO_MIN_HEIGHT} × {HERO_VIDEO_MIN_WIDTH} px portrait minimum · {HERO_VIDEO_MAX_DURATION_SECONDS} s max.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex min-w-0 gap-3">
               <Youtube size={17} className="mt-0.5 shrink-0 text-black/70" />
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-black/80">YouTube</p>
-                <p>
+                <p className="break-words">
                   Vidéo publique ou non répertoriée avec intégration autorisée. Les Shorts sont affichés en portrait avec un fond plein écran dérivé du média.
                 </p>
               </div>
             </div>
           </div>
 
-          <p className="mt-4 border-t border-black/10 pt-4 text-xs leading-5 text-black/40">
+          <p className="mt-4 break-words border-t border-black/10 pt-4 text-xs leading-5 text-black/40">
             Le Hero détecte automatiquement l’orientation. En desktop, un média portrait reste lisible au premier plan avec un fond agrandi et flouté ; sur mobile, il occupe naturellement davantage de l’écran.
           </p>
         </section>
 
         {status ? (
           <div
-            className={`flex items-start gap-2 rounded-xl px-4 py-3 text-xs leading-5 ${
+            className={`flex min-w-0 items-start gap-2 rounded-xl px-4 py-3 text-xs leading-5 ${
               status.kind === "error"
                 ? "bg-red-50 text-red-700"
                 : status.kind === "success"
@@ -574,7 +574,7 @@ export function HeroForm({
             {status.kind === "success" ? (
               <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
             ) : null}
-            <span>{status.text}</span>
+            <span className="min-w-0 break-words">{status.text}</span>
           </div>
         ) : null}
 
