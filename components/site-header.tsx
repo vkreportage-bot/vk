@@ -347,9 +347,8 @@ export function SiteHeader() {
           transition={shouldReduceMotion ? { duration: 0 } : drawerSpring}
           className={[
             "fixed inset-x-0 bottom-0 z-[130] h-[100svh] overflow-hidden",
-            "rounded-t-[26px] border-t border-white/30",
             "bg-white/[0.28] text-black backdrop-blur-[34px] backdrop-saturate-[1.55]",
-            "shadow-[0_-18px_60px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.46)]",
+            "shadow-[0_-18px_60px_rgba(0,0,0,0.12)]",
             "will-change-transform"
           ].join(" ")}
         >
@@ -363,17 +362,17 @@ export function SiteHeader() {
             aria-label={menuOpen ? "Réduire le menu" : "Ouvrir le menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="relative z-20 flex h-11 w-full flex-col items-center justify-center gap-[5px]"
+            className="relative z-20 flex h-11 w-full flex-col items-center justify-center gap-[9px]"
           >
             <motion.span
-              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.85 : 0.7 }}
+              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.88 : 0.72 }}
               transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-              className="block h-px bg-orange-600"
+              className="block h-[2px] bg-black"
             />
             <motion.span
-              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.85 : 0.7 }}
+              animate={{ width: menuOpen ? 52 : 38, opacity: menuOpen ? 0.88 : 0.72 }}
               transition={shouldReduceMotion ? { duration: 0 } : itemSpring}
-              className="block h-px bg-orange-600"
+              className="block h-[2px] bg-black"
             />
           </button>
 
