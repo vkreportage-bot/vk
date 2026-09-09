@@ -73,6 +73,14 @@ model HeroSettings {
   updatedAt DateTime @updatedAt
 }
 
+model MaintenanceSettings {
+  id      String  @id @default("site")
+  enabled Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Article {
   id              String   @id @default(cuid())
   title           String
